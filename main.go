@@ -53,7 +53,7 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 // XRCOPRData holds the OPR for a given player.
 type XRCOPRData struct {
 	Name string
-	OPR  string
+	OPR  int
 }
 
 var (
@@ -123,8 +123,9 @@ func readMatchData() {
 				if line == "" {
 					continue
 				}
-				split := strings.Split(line, ":")
-				players = append(players, XRCOPRData{Name: split[0], OPR: split[1]})
+				split := strings.Split(line, ": ")
+				opr, _ := strconv.Atoi(split[1])
+				players = append(players, XRCOPRData{Name: split[0], OPR: opr})
 			}
 			dataRead.OPR = players
 
