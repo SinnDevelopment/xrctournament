@@ -8,7 +8,8 @@ import (
 )
 
 type WebData struct {
-	TConf TournamentConfig
+	TConf   TournamentConfig
+	Matches []XRCMatchData
 }
 
 func startWebserver(port string) {

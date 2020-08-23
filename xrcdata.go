@@ -34,6 +34,7 @@ type XRCMatchData struct {
 	MatchStatus      string
 	RedAlliance      []XRCPlayer
 	BlueAlliance     []XRCPlayer
+	Completed        time.Time
 }
 
 func (m *XRCMatchData) isMatchFinished() bool {
@@ -64,8 +65,11 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 
 // XRCPlayer holds the OPR for a given player in a given match.
 type XRCPlayer struct {
-	Name string
-	OPR  int
+	Name   string
+	OPR    int
+	Wins   int
+	Losses int
+	Ties   int
 }
 
 func (p *XRCPlayer) Equals(o XRCPlayer) bool {
@@ -75,6 +79,24 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 func exportMatchData(data XRCMatchData) {
 	export, _ := json.Marshal(data)
 	ioutil.WriteFile(strconv.FormatInt(time.Now().Unix(), 10)+".json", export, 0775)
+}
+
+func exportPlayers(match XRCMatchData) {
+	for _, p := range PLAYERS {
+		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
+			if p.Name == mp.Name {
+				p = mp
+			}
+		}
+	}
+	export, _ := json.Marshal(PLAYERS)
+	ioutil.WriteFile("players.json", export, 0775)
+}
+
+func exportMatches(match XRCMatchData) {
+	MATCHES = append(MATCHES, match)
+	export, _ := json.Marshal(MATCHES)
+	ioutil.WriteFile("matches.json", export, 0775)
 }
 
 func readMatchData() {
@@ -163,7 +185,7 @@ func readMatchData() {
 			break
 		}
 	}
-
+	dataRead.Completed = time.Now()
 	matchData <- dataRead
 }
 
@@ -181,9 +203,8 @@ func xrcDataHandler(speed int, quit chan struct{}) {
 				}
 				previousMatch = received
 				go exportMatchData(received)
-
-				// Add to matches.json
-				// Add to players.json
+				go exportPlayers(received)
+				go exportMatches(received)
 			}
 			break
 		case <-ticker.C:

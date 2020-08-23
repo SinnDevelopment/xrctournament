@@ -4,6 +4,7 @@
     "enableWebserver": true,
     "webserverPort": 8080,
     "fileReadSpeed": 1,
+    "matchDataDir": "./",
     "matchConfig": {
         "qualificationsEnabled": true,
         "qualSchedule": "schedule.csv",

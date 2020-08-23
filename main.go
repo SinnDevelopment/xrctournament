@@ -13,22 +13,26 @@ var (
 		CompetitionName: "xRC Tournament",
 		EnableWebserver: true,
 		FileReadSpeed:   5,
+		MatchDatDir:     "./",
 		MatchConfig: MatchConfig{
 			LogfileDirectory:      "./",
 			PlayoffsEnabled:       true,
 			QualificationsEnabled: true,
-			QualSchedule:          "",
-			PlayoffSchedule:       "",
+			QualSchedule:          "schedule.csv",
+			PlayoffSchedule:       "elimschedule.csv",
 		},
 		TwitchChannel: "SinnDevelopment",
 		WebserverPort: 8080,
 	}
+	MATCHES []XRCMatchData
+	PLAYERS []XRCPlayer
 )
 
 type TournamentConfig struct {
 	CompetitionName string      `json:"competitionName"`
 	EnableWebserver bool        `json:"enableWebserver"`
 	FileReadSpeed   int         `json:"fileReadSpeed"`
+	MatchDatDir     string      `json:"matchDataDir"`
 	MatchConfig     MatchConfig `json:"matchConfig"`
 	TwitchChannel   string      `json:"twitchChannel"`
 	WebserverPort   int         `json:"webserverPort"`
@@ -39,6 +43,14 @@ type MatchConfig struct {
 	PlayoffsEnabled       bool   `json:"playoffsEnabled"`
 	QualSchedule          string `json:"qualSchedule"`
 	QualificationsEnabled bool   `json:"qualificationsEnabled"`
+}
+
+type MatchDataFile struct {
+	Matches []XRCMatchData
+}
+
+type PlayerDataFile struct {
+	Players []XRCPlayer
 }
 
 func main() {
@@ -61,12 +73,41 @@ func main() {
 		return
 	}
 	json.Unmarshal(configJSON, &config)
+
 	quit := make(chan struct{})
-	go xrcDataHandler(config.FileReadSpeed, quit)
 
 	if config.EnableWebserver {
 		// Check if data files exist, if they do, load them
 
+		usePlayers := true
+		useMatches := true
+
+		matchesJSON, err := ioutil.ReadFile("matches.json")
+		if err != nil {
+			fmt.Println("Could not read matches.json. Starting with no matches run.")
+			useMatches = false
+		}
+		playerJSON, err := ioutil.ReadFile("players.json")
+		if err != nil {
+			fmt.Println("Could not read players.json. Starting with no players.")
+			usePlayers = false
+		}
+		matchTemp := MatchDataFile{}
+		playerTemp := PlayerDataFile{}
+		if useMatches {
+			json.Unmarshal(matchesJSON, &matchTemp)
+
+		}
+		if usePlayers {
+			json.Unmarshal(playerJSON, &playerTemp)
+		}
+
+		MATCHES = matchTemp.Matches
+		PLAYERS = playerTemp.Players
+
+		go xrcDataHandler(config.FileReadSpeed, quit)
 		startWebserver(strconv.Itoa(config.WebserverPort))
+	} else {
+		xrcDataHandler(config.FileReadSpeed, quit)
 	}
 }
