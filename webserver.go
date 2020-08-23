@@ -10,13 +10,14 @@ import (
 type WebData struct {
 	TConf   TournamentConfig
 	Matches []XRCMatchData
+	Players []XRCPlayer
+	Page    string
 }
 
 func startWebserver(port string) {
 	router := gin.Default()
 	router.GET("/", wIndex)
 	router.GET("/matches", wMatches)
-	router.GET("/players", wPlayers)
 	router.GET("/rankings", wRankings)
 
 	http.Handle("/", router)
@@ -25,30 +26,24 @@ func startWebserver(port string) {
 }
 
 func wIndex(c *gin.Context) {
-	data := WebData{}
-
-	tmpl := getPageTemplate("index.html", c)
-
-	tmpl.Execute(c.Writer, data)
+	executeContent(c, "home")
 }
 
 func wMatches(c *gin.Context) {
-	data := WebData{}
+	executeContent(c, "matches")
 
-	tmpl := getPageTemplate("index.html", c)
-
-	tmpl.Execute(c.Writer, data)
-}
-func wPlayers(c *gin.Context) {
-	data := WebData{}
-
-	tmpl := getPageTemplate("index.html", c)
-
-	tmpl.Execute(c.Writer, data)
 }
 func wRankings(c *gin.Context) {
-	data := WebData{}
+	executeContent(c, "rankings")
+}
 
+func executeContent(c *gin.Context, page string) {
+	data := WebData{
+		TConf:   Config,
+		Matches: MATCHES,
+		Players: PLAYERS,
+		Page:    page,
+	}
 	tmpl := getPageTemplate("index.html", c)
 
 	tmpl.Execute(c.Writer, data)

@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.1.1">
-    <title>Tournament Name</title>
+    <title>{{.TConf.CompetitionName}}</title>
 
 
     <!-- Bootstrap core CSS -->
@@ -180,11 +180,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/players">
-                                Players
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="/matches">
                                 Matches
                             </a>
@@ -194,9 +189,10 @@
             </nav>
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                {{if eq .Page "home" }}
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">{{Tournament Name}}</h1>
+                    <h1 class="h2">{{.TConf.CompetitionName}}</h1>
                 </div>
                 <!-- Add a placeholder for the Twitch embed -->
                 <div id="twitch-embed"></div>
@@ -207,9 +203,11 @@
                     new Twitch.Embed("twitch-embed", {
                         width: 854,
                         height: 480,
-                        channel: "{{channel}}"
+                        channel: "{{.TConf.TwitchChannel}}"
                     });
                 </script>
+                {{end}}
+                {{if eq .Page "rankings" }}
                 <h2>Rankings</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-sm">
@@ -235,26 +233,42 @@
                         </tbody>
                     </table>
                 </div>
-
-
+                {{end}}
+                {{if eq .Page "matches" }}
                 <h2>Matches</h2>
                 <div class="table-responsive">
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>R1</th>
+                                <th>R2</th>
+                                <th>R3</th>
+                                <th>B1</th>
+                                <th>B2</th>
+                                <th>B3</th>
                                 <th>Red</th>
                                 <th>Blue</th>
-                                <th>OPR</th>
-                                <th>Points</th>
-                                <th>W/L/T</th>
                             </tr>
                         </thead>
                         <tbody>
-
+                            {{range .Matches}}
+                            <tr>
+                                <td>#</td>
+                                <td>{{.Red1}}</td>
+                                <td>{{.Red2}}/</td>
+                                <td>{{.Red3}}</td>
+                                <td>{{.Blue1}}</td>
+                                <td>{{.Blue2}}/</td>
+                                <td>{{.Blue3}}</td>
+                                <td>{{.RedScore}}</td>
+                                <td>{{.BlueScore}}</td>
+                            </tr>
+                            {{end}}
                         </tbody>
                     </table>
                 </div>
+                {{end}}
             </main>
         </div>
     </div>

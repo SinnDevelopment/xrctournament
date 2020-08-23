@@ -8,26 +8,6 @@ import (
 	"strconv"
 )
 
-var (
-	DefaultConfig = TournamentConfig{
-		CompetitionName: "xRC Tournament",
-		EnableWebserver: true,
-		FileReadSpeed:   5,
-		MatchDatDir:     "./",
-		MatchConfig: MatchConfig{
-			LogfileDirectory:      "./",
-			PlayoffsEnabled:       true,
-			QualificationsEnabled: true,
-			QualSchedule:          "schedule.csv",
-			PlayoffSchedule:       "elimschedule.csv",
-		},
-		TwitchChannel: "SinnDevelopment",
-		WebserverPort: 8080,
-	}
-	MATCHES []XRCMatchData
-	PLAYERS []XRCPlayer
-)
-
 type TournamentConfig struct {
 	CompetitionName string      `json:"competitionName"`
 	EnableWebserver bool        `json:"enableWebserver"`
@@ -53,14 +33,35 @@ type PlayerDataFile struct {
 	Players []XRCPlayer
 }
 
+var (
+	DefaultConfig = TournamentConfig{
+		CompetitionName: "xRC Tournament",
+		EnableWebserver: true,
+		FileReadSpeed:   5,
+		MatchDatDir:     "./",
+		MatchConfig: MatchConfig{
+			LogfileDirectory:      "./",
+			PlayoffsEnabled:       true,
+			QualificationsEnabled: true,
+			QualSchedule:          "schedule.csv",
+			PlayoffSchedule:       "elimschedule.csv",
+		},
+		TwitchChannel: "SinnDevelopment",
+		WebserverPort: 8080,
+	}
+	MATCHES []XRCMatchData
+	PLAYERS []XRCPlayer
+	Config  TournamentConfig
+)
+
 func main() {
-	config := TournamentConfig{}
+	Config = TournamentConfig{}
 	_, err := os.Open("config.json")
 	if err != nil {
 		fmt.Println("Could not open config.json. Using default values.")
 		fmt.Println(err)
 		// Write config.json out from default values.
-		config = DefaultConfig
+		Config = DefaultConfig
 		defaultConfigJSON, _ := json.Marshal(DefaultConfig)
 		ioutil.WriteFile("config.json", defaultConfigJSON, 0775)
 		return
@@ -72,12 +73,11 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	json.Unmarshal(configJSON, &config)
+	json.Unmarshal(configJSON, &Config)
 
 	quit := make(chan struct{})
 
-	if config.EnableWebserver {
-		// Check if data files exist, if they do, load them
+	if Config.EnableWebserver {
 
 		usePlayers := true
 		useMatches := true
@@ -105,9 +105,10 @@ func main() {
 		MATCHES = matchTemp.Matches
 		PLAYERS = playerTemp.Players
 
-		go xrcDataHandler(config.FileReadSpeed, quit)
-		startWebserver(strconv.Itoa(config.WebserverPort))
+		go xrcDataHandler(Config.FileReadSpeed, quit)
+		startWebserver(strconv.Itoa(Config.WebserverPort))
+
 	} else {
-		xrcDataHandler(config.FileReadSpeed, quit)
+		xrcDataHandler(Config.FileReadSpeed, quit)
 	}
 }
