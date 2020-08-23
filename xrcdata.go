@@ -41,6 +41,7 @@ func (m *XRCMatchData) isMatchFinished() bool {
 	return m.MatchStatus == "FINISHED"
 }
 
+// Equals replaces deep reflection
 func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 	red := true
 	blue := true
@@ -63,7 +64,7 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 	return equal
 }
 
-// XRCPlayer holds the OPR for a given player in a given match.
+// XRCPlayer holds the data for a given player in a given match.
 type XRCPlayer struct {
 	Name   string
 	OPR    int
@@ -72,6 +73,7 @@ type XRCPlayer struct {
 	Ties   int
 }
 
+// Equals replaces deep reflection
 func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 	return p.Name == o.Name && p.OPR == o.OPR
 }
@@ -101,7 +103,7 @@ func exportMatches(match XRCMatchData) {
 
 func readMatchData() {
 	dataRead := XRCMatchData{}
-	files, err := ioutil.ReadDir("./")
+	files, err := ioutil.ReadDir(Config.MatchDataDir)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -113,6 +115,7 @@ func readMatchData() {
 			return
 		}
 
+		// Parse game data files
 		switch file.Name() {
 		case "GameState.txt":
 			dataRead.MatchStatus = string(value)

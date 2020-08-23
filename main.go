@@ -8,15 +8,18 @@ import (
 	"strconv"
 )
 
+// TournamentConfig is the master configuration
 type TournamentConfig struct {
 	CompetitionName string      `json:"competitionName"`
 	EnableWebserver bool        `json:"enableWebserver"`
 	FileReadSpeed   int         `json:"fileReadSpeed"`
-	MatchDatDir     string      `json:"matchDataDir"`
+	MatchDataDir    string      `json:"matchDataDir"`
 	MatchConfig     MatchConfig `json:"matchConfig"`
 	TwitchChannel   string      `json:"twitchChannel"`
 	WebserverPort   int         `json:"webserverPort"`
 }
+
+// MatchConfig holds match specific configuration data.
 type MatchConfig struct {
 	LogfileDirectory      string `json:"logfileDirectory"`
 	PlayoffSchedule       string `json:"playoffSchedule"`
@@ -25,20 +28,23 @@ type MatchConfig struct {
 	QualificationsEnabled bool   `json:"qualificationsEnabled"`
 }
 
+// MatchDataFile is a container for matches.json
 type MatchDataFile struct {
 	Matches []XRCMatchData
 }
 
+// PlayerDataFile is a container for players.json
 type PlayerDataFile struct {
 	Players []XRCPlayer
 }
 
 var (
+	// DefaultConfig is the default config.
 	DefaultConfig = TournamentConfig{
 		CompetitionName: "xRC Tournament",
 		EnableWebserver: true,
 		FileReadSpeed:   5,
-		MatchDatDir:     "./",
+		MatchDataDir:    "./",
 		MatchConfig: MatchConfig{
 			LogfileDirectory:      "./",
 			PlayoffsEnabled:       true,
@@ -49,9 +55,12 @@ var (
 		TwitchChannel: "SinnDevelopment",
 		WebserverPort: 8080,
 	}
+	// MATCHES holds the current master list of matches played.
 	MATCHES []XRCMatchData
+	// PLAYERS holds the current master list of players seen.
 	PLAYERS []XRCPlayer
-	Config  TournamentConfig
+	// Config is the currently active configuration
+	Config TournamentConfig
 )
 
 func main() {

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// WebData is the view data used for all pages
 type WebData struct {
 	TConf   TournamentConfig
 	Matches []XRCMatchData
