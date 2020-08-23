@@ -114,8 +114,10 @@ func readMatchData() {
 			fmt.Println(err)
 			return
 		}
-
-		// Parse game data files
+		if file.IsDir() || !strings.HasSuffix(file.Name(), ".txt") {
+			continue
+		}
+		// Parse game data files only
 		switch file.Name() {
 		case "GameState.txt":
 			dataRead.MatchStatus = string(value)
