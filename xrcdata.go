@@ -85,6 +85,7 @@ func exportMatchData(data XRCMatchData) {
 
 func checkSchedule(data XRCMatchData) {
 	if res, entry := isScheduledMatch(data, MasterSchedule); res {
+		entry.MatchData = &data
 		entry.Completed = true
 	}
 }

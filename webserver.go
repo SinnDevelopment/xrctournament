@@ -9,10 +9,11 @@ import (
 
 // WebData is the view data used for all pages
 type WebData struct {
-	TConf   TournamentConfig
-	Matches []XRCMatchData
-	Players []XRCPlayer
-	Page    string
+	TConf    TournamentConfig
+	Schedule Schedule
+	Matches  []XRCMatchData
+	Players  []XRCPlayer
+	Page     string
 }
 
 func startWebserver(port string) {
@@ -23,7 +24,6 @@ func startWebserver(port string) {
 
 	http.Handle("/", router)
 	router.Run(":" + port)
-
 }
 
 func wIndex(c *gin.Context) {
@@ -40,10 +40,11 @@ func wRankings(c *gin.Context) {
 
 func executeContent(c *gin.Context, page string) {
 	data := WebData{
-		TConf:   Config,
-		Matches: MATCHES,
-		Players: PLAYERS,
-		Page:    page,
+		TConf:    Config,
+		Schedule: MasterSchedule,
+		Matches:  MATCHES,
+		Players:  PLAYERS,
+		Page:     page,
 	}
 	tmpl := getPageTemplate("index.html", c)
 

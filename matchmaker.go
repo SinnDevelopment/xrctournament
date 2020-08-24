@@ -19,6 +19,7 @@ type ScheduleEntry struct {
 	Blue2     string
 	Blue3     string
 	Completed bool
+	MatchData *XRCMatchData
 }
 
 // MatchesXRCMatch checks if the alliances are correct. Order _technically_ doesn't matter.
