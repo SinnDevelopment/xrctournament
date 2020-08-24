@@ -61,6 +61,8 @@ var (
 	PLAYERS []XRCPlayer
 	// Config is the currently active configuration
 	Config TournamentConfig
+	// MasterSchedule is the currently active event schedule
+	MasterSchedule Schedule
 )
 
 func main() {

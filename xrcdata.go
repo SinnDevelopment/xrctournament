@@ -83,6 +83,12 @@ func exportMatchData(data XRCMatchData) {
 	ioutil.WriteFile(strconv.FormatInt(time.Now().Unix(), 10)+".json", export, 0775)
 }
 
+func checkSchedule(data XRCMatchData) {
+	if res, entry := isScheduledMatch(data, MasterSchedule); res {
+		entry.Completed = true
+	}
+}
+
 func exportPlayers(match XRCMatchData) {
 	for _, p := range PLAYERS {
 		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
