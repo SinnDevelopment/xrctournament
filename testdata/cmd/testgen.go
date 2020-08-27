@@ -11,6 +11,7 @@ func main() {
 	genFTCSchedule(50)
 }
 
+// 3v3 matches.
 func genFRCSchedule(matches int) {
 	for i := 0; i < matches; i++ {
 		fmt.Printf("%d,%d,%s,%s,%s,%s,%s,%s\n", i, time.Now().Unix(),
@@ -19,6 +20,7 @@ func genFRCSchedule(matches int) {
 	}
 }
 
+// 2v2 matches, using positions 1/2.
 func genFTCSchedule(matches int) {
 	for i := 0; i < matches; i++ {
 		fmt.Printf("%d,%d,%s,%s,,%s,%s,\n", i, time.Now().Unix(),

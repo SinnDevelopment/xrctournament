@@ -1,6 +1,6 @@
 package main
 
-// TODO: Hardcode files in here.
+// Go does not support resources, all embedded files must be hardcoded here.
 func getData(name string) string {
 	switch name {
 	case "index.html":

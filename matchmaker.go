@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// ScheduleEntry is a Match paired with a time.
+// ScheduleEntry is a Match paired with a time. Linked to a match data result when a match is completed.
 type ScheduleEntry struct {
 	Number    int
 	Time      time.Time
@@ -22,7 +22,7 @@ type ScheduleEntry struct {
 	MatchData *XRCMatchData
 }
 
-// MatchesXRCMatch checks if the alliances are correct. Order _technically_ doesn't matter.
+// MatchesXRCMatch checks if the expected alliance members are the ones that were reported from the match data.
 func (m *ScheduleEntry) MatchesXRCMatch(x XRCMatchData) bool {
 	blue := true
 	red := true
@@ -41,13 +41,15 @@ func (m *ScheduleEntry) MatchesXRCMatch(x XRCMatchData) bool {
 	return red && blue
 }
 
-// Schedule is a series of Schedule Entries attached to a type (qual, playoff, practice)
+// Schedule is a series of Schedule Entries attached to a type (qual, playoff, practice).
+// Supporting multiple types of matches on the view page, or in the master schedule is not implemented.
 type Schedule struct {
 	Matches []ScheduleEntry
 	Type    string
 }
 
-func isScheduledMatch(match XRCMatchData, schedule Schedule) (bool, ScheduleEntry) {
+// IsScheduledMatch handles checks for whether or not a match is within the given schedule.
+func IsScheduledMatch(match XRCMatchData, schedule Schedule) (bool, ScheduleEntry) {
 	for _, m := range schedule.Matches {
 		if m.MatchesXRCMatch(match) {
 			return true, m
@@ -56,7 +58,8 @@ func isScheduledMatch(match XRCMatchData, schedule Schedule) (bool, ScheduleEntr
 	return false, ScheduleEntry{}
 }
 
-func importSchedule(file string) (schedule Schedule) {
+// ImportSchedule handles conversion of the csv of matches into the ScheduleEntry and Schedule structs.
+func ImportSchedule(file string) (schedule Schedule) {
 
 	f, err := os.Open(file)
 	if err != nil {
@@ -72,10 +75,8 @@ func importSchedule(file string) (schedule Schedule) {
 	for _, row := range rows {
 
 		matchNum, _ := strconv.Atoi(row[0])
-		timeRaw, err := time.Parse(time.UnixDate, row[1])
-		if err != nil {
-			timeRaw = currentMatchTime
-		}
+		unixTS, _ := strconv.Atoi(row[1])
+		timeRaw := time.Unix(int64(unixTS), 0)
 
 		scheduleEntry := ScheduleEntry{
 			Number: matchNum + 1,

@@ -114,14 +114,16 @@ func main() {
 		MATCHES = matchTemp.Matches
 		PLAYERS = playerTemp.Players
 
+		// Qualifications and Playoffs are only usable when in webserver mode.
 		if Config.MatchConfig.QualificationsEnabled {
-			MasterSchedule = importSchedule(Config.MatchConfig.QualSchedule)
+			MasterSchedule = ImportSchedule(Config.MatchConfig.QualSchedule)
 		}
 
 		go xrcDataHandler(Config.FileReadSpeed, quit)
 		startWebserver(strconv.Itoa(Config.WebserverPort))
 
 	} else {
+		// If the webserver is not enabled, we must block the main thread from exiting with the datahandler.
 		xrcDataHandler(Config.FileReadSpeed, quit)
 	}
 }

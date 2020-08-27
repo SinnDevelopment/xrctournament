@@ -78,18 +78,23 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 	return p.Name == o.Name && p.OPR == o.OPR
 }
 
+// exportMatchData writes out the per-match log files to the same directory as the
+// executable is being run from.
 func exportMatchData(data XRCMatchData) {
 	export, _ := json.Marshal(data)
 	ioutil.WriteFile(strconv.FormatInt(time.Now().Unix(), 10)+".json", export, 0775)
 }
 
+// checkSchedule updates the given schedule entry if the completed match is one that was scheduled.
 func checkSchedule(data XRCMatchData) {
-	if res, entry := isScheduledMatch(data, MasterSchedule); res {
+	if res, entry := IsScheduledMatch(data, MasterSchedule); res {
 		entry.MatchData = &data
 		entry.Completed = true
 	}
 }
 
+// exportPlayers writes to disk the contents of the currently known player list.
+// BUG(JamieSinn): This currently overwrites the current player's OPR with the one from the match passed. This should instead add it to an array of OPRs from all matches.
 func exportPlayers(match XRCMatchData) {
 	for _, p := range PLAYERS {
 		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
@@ -103,12 +108,14 @@ func exportPlayers(match XRCMatchData) {
 	ioutil.WriteFile("players.json", export, 0775)
 }
 
+// exportMatches writes to disk the contents of the recorded matches.
 func exportMatches(match XRCMatchData) {
 	MATCHES = append(MATCHES, match)
 	export, _ := json.Marshal(MATCHES)
 	ioutil.WriteFile("matches.json", export, 0775)
 }
 
+// readMatchData handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
 func readMatchData() {
 	dataRead := XRCMatchData{}
 	files, err := ioutil.ReadDir(Config.MatchDataDir)
@@ -135,6 +142,9 @@ func readMatchData() {
 			dataRead.Timer = string(value)
 			break
 		case "OPR.txt":
+			// OPR.txt has a special format, each line is related to the alliance position
+			// while blank lines mean no player was in that slot.
+			// This behaviour needs to be checked for alliance sizes not equal to 3. ie. FTC.
 			lines := strings.Split(string(value), "\n")
 			red := []XRCPlayer{}
 			blue := []XRCPlayer{}
@@ -203,8 +213,10 @@ func readMatchData() {
 	matchData <- dataRead
 }
 
+// xrcDataHnadler is the main loop for reading new values and updating the existing ones.
+// Whenever possible, the functions called are split into goroutines for concurrency.
 func xrcDataHandler(speed int, quit chan struct{}) {
-	// Run from within the same directory as the score files.
+
 	ticker := time.NewTicker(time.Duration(speed) * time.Second)
 	for {
 		select {
