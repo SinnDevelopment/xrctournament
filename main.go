@@ -119,11 +119,11 @@ func main() {
 			MasterSchedule = ImportSchedule(Config.MatchConfig.QualSchedule)
 		}
 
-		go xrcDataHandler(Config.FileReadSpeed, quit)
+		go XRCDataHandler(Config.FileReadSpeed, quit)
 		startWebserver(strconv.Itoa(Config.WebserverPort))
 
 	} else {
 		// If the webserver is not enabled, we must block the main thread from exiting with the datahandler.
-		xrcDataHandler(Config.FileReadSpeed, quit)
+		XRCDataHandler(Config.FileReadSpeed, quit)
 	}
 }

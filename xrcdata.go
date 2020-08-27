@@ -85,14 +85,6 @@ func exportMatchData(data XRCMatchData) {
 	ioutil.WriteFile(strconv.FormatInt(time.Now().Unix(), 10)+".json", export, 0775)
 }
 
-// checkSchedule updates the given schedule entry if the completed match is one that was scheduled.
-func checkSchedule(data XRCMatchData, schedule Schedule) {
-	if res, entry := IsScheduledMatch(data, schedule); res {
-		entry.MatchData = &data
-		entry.Completed = true
-	}
-}
-
 // exportPlayers writes to disk the contents of the passed player list.
 // BUG(JamieSinn): This currently overwrites the current player's OPR with the one from the match passed. This should instead add it to an array of OPRs from all matches.
 func exportPlayers(match XRCMatchData, playerSet []XRCPlayer) {
@@ -113,6 +105,10 @@ func exportMatches(match XRCMatchData, matches []XRCMatchData) {
 	matches = append(matches, match)
 	export, _ := json.Marshal(matches)
 	ioutil.WriteFile("matches.json", export, 0775)
+}
+
+func updateSchedule(match *XRCMatchData, schedule Schedule) {
+	IsScheduledMatch(match, schedule)
 }
 
 // readMatchData handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
@@ -213,9 +209,9 @@ func readMatchData(dataChannel chan XRCMatchData) {
 	dataChannel <- dataRead
 }
 
-// xrcDataHnadler is the main loop for reading new values and updating the existing ones.
+// XRCDataHandler is the main loop for reading new values and updating the existing ones.
 // Whenever possible, the functions called are split into goroutines for concurrency.
-func xrcDataHandler(speed int, quit chan struct{}) {
+func XRCDataHandler(speed int, quit chan struct{}) {
 
 	ticker := time.NewTicker(time.Duration(speed) * time.Second)
 	for {
@@ -228,6 +224,8 @@ func xrcDataHandler(speed int, quit chan struct{}) {
 				}
 				fmt.Println("Received: ", received)
 				previousMatch = received
+
+				go updateSchedule(&received, MasterSchedule)
 				go exportMatchData(received)
 				go exportPlayers(received, PLAYERS)
 				go exportMatches(received, MATCHES)
