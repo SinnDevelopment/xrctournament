@@ -41,7 +41,7 @@ func (m *XRCMatchData) isMatchFinished() bool {
 	return m.MatchStatus == "FINISHED"
 }
 
-// Equals replaces deep reflection
+// Equals replaces reflect.DeepEquals
 func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 	red := true
 	blue := true
@@ -86,17 +86,17 @@ func exportMatchData(data XRCMatchData) {
 }
 
 // checkSchedule updates the given schedule entry if the completed match is one that was scheduled.
-func checkSchedule(data XRCMatchData) {
-	if res, entry := IsScheduledMatch(data, MasterSchedule); res {
+func checkSchedule(data XRCMatchData, schedule Schedule) {
+	if res, entry := IsScheduledMatch(data, schedule); res {
 		entry.MatchData = &data
 		entry.Completed = true
 	}
 }
 
-// exportPlayers writes to disk the contents of the currently known player list.
+// exportPlayers writes to disk the contents of the passed player list.
 // BUG(JamieSinn): This currently overwrites the current player's OPR with the one from the match passed. This should instead add it to an array of OPRs from all matches.
-func exportPlayers(match XRCMatchData) {
-	for _, p := range PLAYERS {
+func exportPlayers(match XRCMatchData, playerSet []XRCPlayer) {
+	for _, p := range playerSet {
 		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
 			if p.Name == mp.Name {
 				// TODO: This overwrites the OPR with the most recent, instead of averaging them.
@@ -104,19 +104,19 @@ func exportPlayers(match XRCMatchData) {
 			}
 		}
 	}
-	export, _ := json.Marshal(PLAYERS)
+	export, _ := json.Marshal(playerSet)
 	ioutil.WriteFile("players.json", export, 0775)
 }
 
 // exportMatches writes to disk the contents of the recorded matches.
-func exportMatches(match XRCMatchData) {
-	MATCHES = append(MATCHES, match)
-	export, _ := json.Marshal(MATCHES)
+func exportMatches(match XRCMatchData, matches []XRCMatchData) {
+	matches = append(matches, match)
+	export, _ := json.Marshal(matches)
 	ioutil.WriteFile("matches.json", export, 0775)
 }
 
 // readMatchData handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
-func readMatchData() {
+func readMatchData(dataChannel chan XRCMatchData) {
 	dataRead := XRCMatchData{}
 	files, err := ioutil.ReadDir(Config.MatchDataDir)
 	if err != nil {
@@ -210,7 +210,7 @@ func readMatchData() {
 		}
 	}
 	dataRead.Completed = time.Now()
-	matchData <- dataRead
+	dataChannel <- dataRead
 }
 
 // xrcDataHnadler is the main loop for reading new values and updating the existing ones.
@@ -229,12 +229,12 @@ func xrcDataHandler(speed int, quit chan struct{}) {
 				fmt.Println("Received: ", received)
 				previousMatch = received
 				go exportMatchData(received)
-				go exportPlayers(received)
-				go exportMatches(received)
+				go exportPlayers(received, PLAYERS)
+				go exportMatches(received, MATCHES)
 			}
 			break
 		case <-ticker.C:
-			go readMatchData()
+			go readMatchData(matchData)
 			break
 		case <-quit:
 			ticker.Stop()

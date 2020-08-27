@@ -16,12 +16,13 @@ func Test_exportMatches(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			exportMatches(tt.args.match)
+			exportMatches(tt.args.match, []XRCMatchData{})
 		})
 	}
 }
 
 func Test_readMatchData(t *testing.T) {
+	dataChan := make(chan XRCMatchData)
 	tests := []struct {
 		name string
 	}{
@@ -29,7 +30,7 @@ func Test_readMatchData(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			readMatchData()
+			readMatchData(dataChan)
 		})
 	}
 }
@@ -46,7 +47,7 @@ func Test_exportPlayers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			exportPlayers(tt.args.match)
+			exportPlayers(tt.args.match, []XRCPlayer{})
 		})
 	}
 }
@@ -63,7 +64,7 @@ func Test_checkSchedule(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			checkSchedule(tt.args.data)
+			checkSchedule(tt.args.data, Schedule{})
 		})
 	}
 }
