@@ -66,7 +66,6 @@ var (
 )
 
 func main() {
-	Config = TournamentConfig{}
 	_, err := os.Open("config.json")
 	if err != nil {
 		fmt.Println("Could not open config.json. Using default values.")
@@ -107,7 +106,6 @@ func main() {
 		playerTemp := PlayerDataFile{}
 		if useMatches {
 			json.Unmarshal(matchesJSON, &matchTemp)
-
 		}
 		if usePlayers {
 			json.Unmarshal(playerJSON, &playerTemp)
@@ -115,6 +113,10 @@ func main() {
 
 		MATCHES = matchTemp.Matches
 		PLAYERS = playerTemp.Players
+
+		if Config.MatchConfig.QualificationsEnabled {
+			MasterSchedule = importSchedule(Config.MatchConfig.QualSchedule)
+		}
 
 		go xrcDataHandler(Config.FileReadSpeed, quit)
 		startWebserver(strconv.Itoa(Config.WebserverPort))

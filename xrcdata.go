@@ -94,6 +94,7 @@ func exportPlayers(match XRCMatchData) {
 	for _, p := range PLAYERS {
 		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
 			if p.Name == mp.Name {
+				// TODO: This overwrites the OPR with the most recent, instead of averaging them.
 				p = mp
 			}
 		}
@@ -116,13 +117,14 @@ func readMatchData() {
 		return
 	}
 	for _, file := range files {
+		if file.IsDir() || !strings.HasSuffix(file.Name(), ".txt") {
+			continue
+		}
 		value, err := ioutil.ReadFile(file.Name())
+
 		if err != nil {
 			fmt.Println(err)
 			return
-		}
-		if file.IsDir() || !strings.HasSuffix(file.Name(), ".txt") {
-			continue
 		}
 		// Parse game data files only
 		switch file.Name() {
@@ -207,12 +209,12 @@ func xrcDataHandler(speed int, quit chan struct{}) {
 	for {
 		select {
 		case received := <-matchData:
-			fmt.Println("Received: ", received)
 			if received.isMatchFinished() {
 				// Check that we're not exporting a duplicate of the match.
 				if received.Equals(previousMatch) {
 					continue
 				}
+				fmt.Println("Received: ", received)
 				previousMatch = received
 				go exportMatchData(received)
 				go exportPlayers(received)

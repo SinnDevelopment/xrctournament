@@ -1,13 +1,13 @@
 {
     "competitionName": "xRC Tournament",
-    "twitchChannel": "sinndevleopment",
+    "twitchChannel": "sinndevelopment",
     "enableWebserver": true,
     "webserverPort": 8080,
     "fileReadSpeed": 1,
     "matchDataDir": "./",
     "matchConfig": {
         "qualificationsEnabled": true,
-        "qualSchedule": "schedule.csv",
+        "qualSchedule": "testdata/schedule.csv",
         "playoffsEnabled": false,
         "playoffSchedule": "elims.csv",
         "logfileDirectory": "./"

@@ -9,10 +9,10 @@ import (
 
 // WebData is the view data used for all pages
 type WebData struct {
-	TConf    TournamentConfig
-	Schedule Schedule
-	Matches  []XRCMatchData
-	Players  []XRCPlayer
+	TConf    *TournamentConfig
+	Schedule *Schedule
+	Matches  *[]XRCMatchData
+	Players  *[]XRCPlayer
 	Page     string
 }
 
@@ -40,14 +40,13 @@ func wRankings(c *gin.Context) {
 
 func executeContent(c *gin.Context, page string) {
 	data := WebData{
-		TConf:    Config,
-		Schedule: MasterSchedule,
-		Matches:  MATCHES,
-		Players:  PLAYERS,
+		TConf:    &Config,
+		Schedule: &MasterSchedule,
+		Matches:  &MATCHES,
+		Players:  &PLAYERS,
 		Page:     page,
 	}
 	tmpl := getPageTemplate("index.html", c)
-
 	tmpl.Execute(c.Writer, data)
 }
 

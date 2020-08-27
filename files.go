@@ -14,7 +14,7 @@ func getData(name string) string {
 			<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
 			<meta name="generator" content="Jekyll v4.1.1">
 			<title>{{.TConf.CompetitionName}}</title>
-		
+
 		
 			<!-- Bootstrap core CSS -->
 			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -30,7 +30,7 @@ func getData(name string) string {
 				crossorigin="anonymous"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
 		
-		
+
 			<style>
 				.bd-placeholder-img {
 					font-size: 1.125rem;
@@ -258,18 +258,22 @@ func getData(name string) string {
 									</tr>
 								</thead>
 								<tbody>
+									{{with .Schedule}}
 									{{range .Matches}}
 									<tr>
-										<td>#</td>
+										<td>{{.Number}}</td>
 										<td>{{.Red1}}</td>
-										<td>{{.Red2}}/</td>
+										<td>{{.Red2}}</td>
 										<td>{{.Red3}}</td>
 										<td>{{.Blue1}}</td>
-										<td>{{.Blue2}}/</td>
+										<td>{{.Blue2}}</td>
 										<td>{{.Blue3}}</td>
-										<td>{{.RedScore}}</td>
+										{{with .MatchData}}
 										<td>{{.BlueScore}}</td>
+										<td>{{.RedScore}}</td>
+										{{end}}
 									</tr>
+									{{end}}
 									{{end}}
 								</tbody>
 							</table>

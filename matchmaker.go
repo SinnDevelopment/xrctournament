@@ -72,13 +72,13 @@ func importSchedule(file string) (schedule Schedule) {
 	for _, row := range rows {
 
 		matchNum, _ := strconv.Atoi(row[0])
-		timeRaw, err := time.Parse("FORMAT? Unix?", row[1])
+		timeRaw, err := time.Parse(time.UnixDate, row[1])
 		if err != nil {
 			timeRaw = currentMatchTime
 		}
 
 		scheduleEntry := ScheduleEntry{
-			Number: matchNum,
+			Number: matchNum + 1,
 			Time:   timeRaw,
 			Red1:   row[2],
 			Red2:   row[3],
@@ -87,7 +87,7 @@ func importSchedule(file string) (schedule Schedule) {
 			Blue2:  row[6],
 			Blue3:  row[7],
 		}
-		schedule.Matches[matchNum-1] = scheduleEntry
+		schedule.Matches = append(schedule.Matches, scheduleEntry)
 		currentMatchTime = currentMatchTime.Add(5 * time.Minute)
 	}
 	return
