@@ -45,9 +45,13 @@ func (m *XRCMatchData) isMatchFinished() bool {
 func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 	red := true
 	blue := true
-	for i := 0; i < 3; i++ {
-		blue = blue && (m.BlueAlliance[i].Equals(o.BlueAlliance[i]))
-		red = red && (m.RedAlliance[i].Equals(o.RedAlliance[i]))
+	if len(m.BlueAlliance) == len(o.BlueAlliance) && len(o.RedAlliance) == len(m.RedAlliance) {
+		for i := 0; i < len(m.RedAlliance); i++ {
+			blue = blue && (m.BlueAlliance[i].Equals(o.BlueAlliance[i]))
+			red = red && (m.RedAlliance[i].Equals(o.RedAlliance[i]))
+		}
+	} else {
+		return false
 	}
 	equal := m.BlueAuto == o.BlueAuto &&
 		m.BluePenalty == o.BluePenalty &&
