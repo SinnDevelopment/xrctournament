@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -223,7 +224,7 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 		case received := <-matchData:
 			if received.isMatchFinished() {
 				// Check that we're not exporting a duplicate of the match.
-				if received.Equals(previousMatch) {
+				if reflect.DeepEqual(received, previousMatch) {
 					continue
 				}
 				fmt.Println("Received: ", received)
