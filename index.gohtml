@@ -34,7 +34,7 @@
 					-ms-user-select: none;
 					user-select: none;
 				}
-		
+
 				@media (min-width: 768px) {
 					.bd-placeholder-img-lg {
 						font-size: 3.5rem;
@@ -252,22 +252,41 @@
 									</tr>
 								</thead>
 								<tbody>
-									{{with .Schedule}}
-									{{range .Matches}}
-									<tr>
-										<td>{{.Number}}</td>
-										<td>{{.Red1}}</td>
-										<td>{{.Red2}}</td>
-										<td>{{.Red3}}</td>
-										<td>{{.Blue1}}</td>
-										<td>{{.Blue2}}</td>
-										<td>{{.Blue3}}</td>
-										{{with .MatchData}}
-										<td>{{.BlueScore}}</td>
-										<td>{{.RedScore}}</td>
+
+									{{if or .TConf.MatchConfig.QualificationsEnabled .TConf.MatchConfig.PlayoffsEnabled}}
+										{{with .Schedule}}
+											{{range .Matches}}
+											<tr>
+												<td>{{.Number}}</td>
+												<td>{{.Red1}}</td>
+												<td>{{.Red2}}</td>
+												<td>{{.Red3}}</td>
+												<td>{{.Blue1}}</td>
+												<td>{{.Blue2}}</td>
+												<td>{{.Blue3}}</td>
+												{{with .MatchData}}
+												<td>{{.BlueScore}}</td>
+												<td>{{.RedScore}}</td>
+												{{end}}
+											</tr>
+											{{end}}
 										{{end}}
-									</tr>
-									{{end}}
+									{{else}}
+										{{range .Matches}}
+										<tr>
+											<td>{{.Number}}</td>
+											<td>{{.Red1}}</td>
+											<td>{{.Red2}}</td>
+											<td>{{.Red3}}</td>
+											<td>{{.Blue1}}</td>
+											<td>{{.Blue2}}</td>
+											<td>{{.Blue3}}</td>
+											{{with .MatchData}}
+											<td>{{.BlueScore}}</td>
+											<td>{{.RedScore}}</td>
+											{{end}}
+										</tr>
+										{{end}}
 									{{end}}
 								</tbody>
 							</table>
@@ -276,8 +295,8 @@
 					</main>
 				</div>
 			</div>
-		
-		
+
+
 		</body>
 
 		</html>

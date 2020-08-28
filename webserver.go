@@ -52,7 +52,7 @@ func executeContent(c *gin.Context, page string) {
 		Players:  &PLAYERS,
 		Page:     page,
 	}
-	html := getData(page)
+	html := getData("index.html")
 	tmpl, _ := template.New(page).Parse(html)
 	tmpl.Execute(c.Writer, data)
 }

@@ -6,7 +6,7 @@ func getData(name string) string {
 	case "index.html":
 		return `<!doctype html>
 		<html lang="en">
-		
+
 		<head>
 			<meta charset="utf-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -29,7 +29,7 @@ func getData(name string) string {
 				integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
 				crossorigin="anonymous"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-		
+
 
 			<style>
 				.bd-placeholder-img {
@@ -40,7 +40,7 @@ func getData(name string) string {
 					-ms-user-select: none;
 					user-select: none;
 				}
-		
+
 				@media (min-width: 768px) {
 					.bd-placeholder-img-lg {
 						font-size: 3.5rem;
@@ -105,7 +105,7 @@ func getData(name string) string {
 					margin-right: 4px;
 					color: #999;
 				}
-		
+
 				.sidebar .nav-link.active {
 					color: #007bff;
 				}
@@ -155,7 +155,7 @@ func getData(name string) string {
 				}
 			</style>
 		</head>
-		
+
 		<body>
 			<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
 				<a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">{{.TConf.CompetitionName}}</a>
@@ -258,22 +258,41 @@ func getData(name string) string {
 									</tr>
 								</thead>
 								<tbody>
-									{{with .Schedule}}
-									{{range .Matches}}
-									<tr>
-										<td>{{.Number}}</td>
-										<td>{{.Red1}}</td>
-										<td>{{.Red2}}</td>
-										<td>{{.Red3}}</td>
-										<td>{{.Blue1}}</td>
-										<td>{{.Blue2}}</td>
-										<td>{{.Blue3}}</td>
-										{{with .MatchData}}
-										<td>{{.BlueScore}}</td>
-										<td>{{.RedScore}}</td>
+
+									{{if or .TConf.MatchConfig.QualificationsEnabled .TConf.MatchConfig.PlayoffsEnabled}}
+										{{with .Schedule}}
+											{{range .Matches}}
+											<tr>
+												<td>{{.Number}}</td>
+												<td>{{.Red1}}</td>
+												<td>{{.Red2}}</td>
+												<td>{{.Red3}}</td>
+												<td>{{.Blue1}}</td>
+												<td>{{.Blue2}}</td>
+												<td>{{.Blue3}}</td>
+												{{with .MatchData}}
+												<td>{{.BlueScore}}</td>
+												<td>{{.RedScore}}</td>
+												{{end}}
+											</tr>
+											{{end}}
 										{{end}}
-									</tr>
-									{{end}}
+									{{else}}
+										{{range .Matches}}
+										<tr>
+											<td>{{.Number}}</td>
+											<td>{{.Red1}}</td>
+											<td>{{.Red2}}</td>
+											<td>{{.Red3}}</td>
+											<td>{{.Blue1}}</td>
+											<td>{{.Blue2}}</td>
+											<td>{{.Blue3}}</td>
+											{{with .MatchData}}
+											<td>{{.BlueScore}}</td>
+											<td>{{.RedScore}}</td>
+											{{end}}
+										</tr>
+										{{end}}
 									{{end}}
 								</tbody>
 							</table>
@@ -282,10 +301,10 @@ func getData(name string) string {
 					</main>
 				</div>
 			</div>
-		
-		
+
+
 		</body>
-		
+
 		</html>`
 	default:
 		return ""
