@@ -11,8 +11,8 @@ import (
 type WebData struct {
 	TConf    *TournamentConfig
 	Schedule *Schedule
-	Matches  *[]XRCMatchData
-	Players  *[]XRCPlayer
+	Matches  []XRCMatchData
+	Players  []XRCPlayer
 	Page     string
 }
 
@@ -48,8 +48,8 @@ func executeContent(c *gin.Context, page string) {
 	data := WebData{
 		TConf:    &Config,
 		Schedule: &MasterSchedule,
-		Matches:  &MATCHES,
-		Players:  &PLAYERS,
+		Matches:  MATCHES,
+		Players:  PLAYERS,
 		Page:     page,
 	}
 	html := getData("index.html")

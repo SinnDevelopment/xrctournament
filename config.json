@@ -1,6 +1,7 @@
 {
     "competitionName": "xRC Tournament",
     "twitchChannel": "sinndevelopment",
+    "websiteUrl": "xrc.robotsatcne.com",
     "enableWebserver": true,
     "webserverPort": 8080,
     "fileReadSpeed": 1,

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"reflect"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -48,9 +48,12 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 	blue := true
 	if len(m.BlueAlliance) == len(o.BlueAlliance) && len(o.RedAlliance) == len(m.RedAlliance) {
 		for i := 0; i < len(m.RedAlliance); i++ {
-			blue = blue && (m.BlueAlliance[i].Equals(o.BlueAlliance[i]))
 			red = red && (m.RedAlliance[i].Equals(o.RedAlliance[i]))
 		}
+		for i := 0; i < len(m.BlueAlliance); i++ {
+			blue = blue && (m.BlueAlliance[i].Equals(o.BlueAlliance[i]))
+		}
+
 	} else {
 		return false
 	}
@@ -95,12 +98,13 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 // executable is being run from.
 func exportMatchData(data XRCMatchData) {
 	export, _ := json.Marshal(data)
-	ioutil.WriteFile(strconv.FormatInt(time.Now().Unix(), 10)+".json", export, 0775)
+	path := filepath.FromSlash(Config.MatchConfig.LogfileDirectory + "/" + strconv.FormatInt(time.Now().Unix(), 10) + ".json")
+	ioutil.WriteFile(path, export, 0775)
 }
 
 // exportPlayers writes to disk the contents of the passed player list.
-func exportPlayers(match XRCMatchData, playerSet []XRCPlayer) {
-	for _, p := range playerSet {
+func exportPlayers(match XRCMatchData, playerSet *[]XRCPlayer) {
+	for _, p := range *playerSet {
 		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
 			if p.Name == mp.Name {
 				p.OPR = append(p.OPR, mp.OPR...)
@@ -112,8 +116,8 @@ func exportPlayers(match XRCMatchData, playerSet []XRCPlayer) {
 }
 
 // exportMatches writes to disk the contents of the recorded matches.
-func exportMatches(match XRCMatchData, matches []XRCMatchData) {
-	matches = append(matches, match)
+func exportMatches(match XRCMatchData, matches *[]XRCMatchData) {
+	*matches = append(*matches, match)
 	export, _ := json.Marshal(matches)
 	ioutil.WriteFile("matches.json", export, 0775)
 }
@@ -134,7 +138,8 @@ func readMatchData(dataChannel chan XRCMatchData) {
 		if file.IsDir() || !strings.HasSuffix(file.Name(), ".txt") {
 			continue
 		}
-		value, err := ioutil.ReadFile(file.Name())
+		path := filepath.FromSlash(Config.MatchDataDir + "/" + file.Name())
+		value, err := ioutil.ReadFile(path)
 
 		if err != nil {
 			fmt.Println(err)
@@ -230,7 +235,7 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 		case received := <-matchData:
 			if received.isMatchFinished() {
 				// Check that we're not exporting a duplicate of the match.
-				if reflect.DeepEqual(received, previousMatch) {
+				if received.Equals(previousMatch) {
 					continue
 				}
 				fmt.Println("Received: ", received)
@@ -238,8 +243,8 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 
 				go updateSchedule(&received, MasterSchedule)
 				go exportMatchData(received)
-				go exportPlayers(received, PLAYERS)
-				go exportMatches(received, MATCHES)
+				go exportPlayers(received, &PLAYERS)
+				go exportMatches(received, &MATCHES)
 			}
 			break
 		case <-ticker.C:

@@ -17,6 +17,7 @@ type TournamentConfig struct {
 	MatchConfig     MatchConfig `json:"matchConfig"`
 	TwitchChannel   string      `json:"twitchChannel"`
 	WebserverPort   int         `json:"webserverPort"`
+	WebsiteUrl      string      `json:"websiteUrl"`
 }
 
 // MatchConfig holds match specific configuration data.
@@ -45,6 +46,7 @@ var (
 		EnableWebserver: true,
 		FileReadSpeed:   5,
 		MatchDataDir:    "./",
+		WebsiteUrl:      "localhost",
 		MatchConfig: MatchConfig{
 			LogfileDirectory:      "./",
 			PlayoffsEnabled:       true,
