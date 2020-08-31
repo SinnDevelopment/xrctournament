@@ -16,7 +16,7 @@ func Test_exportMatches(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			exportMatches(tt.args.match, []XRCMatchData{})
+			exportMatches(tt.args.match, &[]XRCMatchData{})
 		})
 	}
 }
@@ -47,7 +47,7 @@ func Test_exportPlayers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			exportPlayers(tt.args.match, []XRCPlayer{})
+			exportPlayers(tt.args.match, &[]XRCPlayer{})
 		})
 	}
 }
