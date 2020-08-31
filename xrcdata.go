@@ -72,15 +72,23 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 // XRCPlayer holds the data for a given player in a given match.
 type XRCPlayer struct {
 	Name   string
-	OPR    int
+	OPR    []int
 	Wins   int
 	Losses int
 	Ties   int
 }
 
+func (p *XRCPlayer) AvgOPR() int {
+	sum := 0
+	for _, i := range p.OPR {
+		sum += i
+	}
+	return sum / len(p.OPR)
+}
+
 // Equals replaces deep reflection
 func (p *XRCPlayer) Equals(o XRCPlayer) bool {
-	return p.Name == o.Name && p.OPR == o.OPR
+	return p.Name == o.Name && len(p.OPR) == len(o.OPR)
 }
 
 // exportMatchData writes out the per-match log files to the same directory as the
@@ -91,13 +99,11 @@ func exportMatchData(data XRCMatchData) {
 }
 
 // exportPlayers writes to disk the contents of the passed player list.
-// BUG(JamieSinn): This currently overwrites the current player's OPR with the one from the match passed. This should instead add it to an array of OPRs from all matches.
 func exportPlayers(match XRCMatchData, playerSet []XRCPlayer) {
 	for _, p := range playerSet {
 		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
 			if p.Name == mp.Name {
-				// TODO: This overwrites the OPR with the most recent, instead of averaging them.
-				p = mp
+				p.OPR = append(p.OPR, mp.OPR...)
 			}
 		}
 	}
@@ -147,15 +153,15 @@ func readMatchData(dataChannel chan XRCMatchData) {
 			// while blank lines mean no player was in that slot.
 			// This behaviour needs to be checked for alliance sizes not equal to 3. ie. FTC.
 			lines := strings.Split(string(value), "\n")
-			red := []XRCPlayer{}
-			blue := []XRCPlayer{}
+			var red []XRCPlayer
+			var blue []XRCPlayer
 			for i, line := range lines {
 				player := XRCPlayer{}
 				if line != "" {
 					split := strings.Split(line, ": ")
 					opr, _ := strconv.Atoi(split[1])
 					player.Name = split[0]
-					player.OPR = opr
+					player.OPR = append(player.OPR, opr)
 				}
 				if i < 3 {
 					red = append(red, player)
