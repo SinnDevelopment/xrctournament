@@ -99,7 +99,11 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 func exportMatchData(data XRCMatchData) {
 	export, _ := json.Marshal(data)
 	path := filepath.FromSlash(Config.MatchConfig.LogfileDirectory + "/" + strconv.FormatInt(time.Now().Unix(), 10) + ".json")
-	ioutil.WriteFile(path, export, 0775)
+	err := ioutil.WriteFile(path, export, 0775)
+	if err != nil {
+		fmt.Println("Could not write match archive data.")
+		fmt.Println(err)
+	}
 }
 
 // exportPlayers writes to disk the contents of the passed player list.
@@ -112,14 +116,24 @@ func exportPlayers(match XRCMatchData, playerSet *[]XRCPlayer) {
 		}
 	}
 	export, _ := json.Marshal(playerSet)
-	ioutil.WriteFile("players.json", export, 0775)
+	err := ioutil.WriteFile("players.json", export, 0775)
+	if err != nil {
+		fmt.Println("Could not write player master data.")
+		fmt.Println(err)
+	}
+
 }
 
 // exportMatches writes to disk the contents of the recorded matches.
 func exportMatches(match XRCMatchData, matches *[]XRCMatchData) {
 	*matches = append(*matches, match)
-	export, _ := json.Marshal(matches)
-	ioutil.WriteFile("matches.json", export, 0775)
+	export, _ := json.Marshal(*matches)
+	err := ioutil.WriteFile("matches.json", export, 0775)
+	if err != nil {
+		fmt.Println("Could not write match master data.")
+		fmt.Println(err)
+	}
+
 }
 
 func updateSchedule(match *XRCMatchData, schedule Schedule) {

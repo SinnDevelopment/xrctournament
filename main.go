@@ -29,16 +29,6 @@ type MatchConfig struct {
 	QualificationsEnabled bool   `json:"qualificationsEnabled"`
 }
 
-// MatchDataFile is a container for matches.json
-type MatchDataFile struct {
-	Matches []XRCMatchData
-}
-
-// PlayerDataFile is a container for players.json
-type PlayerDataFile struct {
-	Players []XRCPlayer
-}
-
 var (
 	// DefaultConfig is the default config.
 	DefaultConfig = TournamentConfig{
@@ -75,7 +65,11 @@ func main() {
 		// Write config.json out from default values.
 		Config = DefaultConfig
 		defaultConfigJSON, _ := json.Marshal(DefaultConfig)
-		ioutil.WriteFile("config.json", defaultConfigJSON, 0775)
+		err = ioutil.WriteFile("config.json", defaultConfigJSON, 0775)
+		if err != nil {
+			fmt.Println("Could not write default config.json.")
+			fmt.Println(err)
+		}
 		return
 	}
 
@@ -85,7 +79,12 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	json.Unmarshal(configJSON, &Config)
+	err = json.Unmarshal(configJSON, &Config)
+	if err != nil {
+		fmt.Println("Could not parse config.json. Please correct linting errors.")
+		fmt.Println(err)
+		return
+	}
 
 	quit := make(chan struct{})
 
@@ -104,17 +103,19 @@ func main() {
 			fmt.Println("Could not read players.json. Starting with no players.")
 			usePlayers = false
 		}
-		matchTemp := MatchDataFile{}
-		playerTemp := PlayerDataFile{}
+
 		if useMatches {
-			json.Unmarshal(matchesJSON, &matchTemp)
+			err = json.Unmarshal(matchesJSON, &MATCHES)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 		if usePlayers {
-			json.Unmarshal(playerJSON, &playerTemp)
+			err = json.Unmarshal(playerJSON, &PLAYERS)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
-
-		MATCHES = matchTemp.Matches
-		PLAYERS = playerTemp.Players
 
 		// Qualifications and Playoffs are only usable when in webserver mode.
 		if Config.MatchConfig.QualificationsEnabled {
