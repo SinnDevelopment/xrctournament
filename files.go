@@ -30,7 +30,16 @@ func getData(name string) string {
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
 
-
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#xrcdata').DataTable({
+                "pageLength": 50
+            });
+        });
+    </script>
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -157,7 +166,8 @@ func getData(name string) string {
 </head>
 
 <body>
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+<nav class=" navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow
+    ">
     <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">{{.TConf.CompetitionName}}</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
             data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -205,18 +215,20 @@ func getData(name string) string {
                 <script src="https://embed.twitch.tv/embed/v1.js"></script>
 
                 <!-- Create a Twitch.Embed object that will render within the "twitch-embed" root element. -->
-                <script type="text/javascript">
+                <script
+                        type="text/javascript">
                     new Twitch.Embed("twitch-embed", {
                         width: 854,
                         height: 480,
-                        channel: "{{.TConf.TwitchChannel}}"
+                        channel: "{{.TConf.TwitchChannel}}",
+                        parent: ["{{.TConf.WebsiteUrl}}"]
                     });
                 </script>
             {{end}}
             {{if eq .Page "rankings" }}
                 <h2>Rankings</h2>
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" id="xrcdata">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -243,7 +255,7 @@ func getData(name string) string {
             {{if eq .Page "matches" }}
                 <h2>Matches</h2>
                 <div class="table-responsive">
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-sm" id="xrcdata">
                         <thead>
 
                         <tr>
