@@ -54,8 +54,6 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 			blue = blue && (m.BlueAlliance[i].Equals(o.BlueAlliance[i]))
 		}
 
-	} else {
-		return false
 	}
 	equal := m.BlueAuto == o.BlueAuto &&
 		m.BluePenalty == o.BluePenalty &&
@@ -66,9 +64,8 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 		m.RedScore == o.RedScore &&
 		m.RedAdjust == o.RedAdjust &&
 		m.Timer == m.Timer &&
-		m.MatchStatus == o.MatchStatus &&
-		red &&
-		blue
+		m.MatchStatus == o.MatchStatus
+		//&& red && blue
 	return equal
 }
 
