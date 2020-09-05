@@ -233,18 +233,18 @@ func getData(name string) string {
                         <tr>
                             <th>#</th>
                             <th>Name</th>
+                            <th>RP</th>
                             <th>OPR</th>
-                            <th>Points</th>
                             <th>W/L/T</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {{range .Players}}
+                        {{range $index, $element := .Players}}
                             <tr>
                                 <td>#</td>
                                 <td>{{.Name}}</td>
-                                <td>{{.OPR}}/</td>
-                                <td>{{.Points}}</td>
+                                <td>{{rankPoints $element}}</td>
+								<td>{{avgOPR $element}}</td>
                                 <td>{{.Wins}}/{{.Losses}}/{{.Ties}}</td>
                             </tr>
                         {{end}}
@@ -260,6 +260,7 @@ func getData(name string) string {
 
                         <tr>
                             <th>#</th>
+                            <th>Time</th>
                             {{if or .TConf.MatchConfig.QualificationsEnabled .TConf.MatchConfig.PlayoffsEnabled}}
                                 <th>R1</th>
                                 <th>R2</th>
@@ -300,7 +301,8 @@ func getData(name string) string {
                         {{else}}
                             {{range $index, $element := .Matches}}
                                 <tr>
-                                    <td>{{$index}}</td>
+                                    <td><a href="/matches/{{$index}}">{{$index}}</a></td>
+                                    <td>{{.Completed}}</td>
                                     <td>
                                         {{range .RedAlliance}}
                                             {{.Name}}

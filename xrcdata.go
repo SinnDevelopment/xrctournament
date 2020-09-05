@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -79,11 +80,33 @@ type XRCPlayer struct {
 }
 
 func (p *XRCPlayer) AvgOPR() int {
+	if len(p.OPR) == 0 {
+		return 0
+	}
 	sum := 0
 	for _, i := range p.OPR {
 		sum += i
 	}
 	return sum / len(p.OPR)
+}
+
+func (p *XRCPlayer) RP() int {
+	return p.Wins*2 + p.Ties
+}
+
+func (p *XRCPlayer) Update(o XRCPlayer) {
+	if p.Name != o.Name {
+		return
+	}
+	if len(p.OPR) == len(o.OPR) {
+		// Player OPRs are the same, do not combine.
+		return
+	}
+
+	p.Wins = o.Wins
+	p.Ties = o.Ties
+	p.Losses = o.Losses
+	p.OPR = o.OPR
 }
 
 // Equals replaces deep reflection
@@ -104,15 +127,26 @@ func exportMatchData(data XRCMatchData) {
 }
 
 // exportPlayers writes to disk the contents of the passed player list.
-func exportPlayers(match XRCMatchData, playerSet *[]XRCPlayer) {
-	for _, p := range *playerSet {
-		for _, mp := range append(match.RedAlliance, match.BlueAlliance...) {
-			if p.Name == mp.Name {
-				p.OPR = append(p.OPR, mp.OPR...)
-			}
+func exportPlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[string]XRCPlayer) {
+	// Need to parse and deduplicate.
+
+	matchPlayers := append(match.BlueAlliance, match.RedAlliance...)
+	*seenPlayers = append(*seenPlayers, matchPlayers...)
+
+	for _, p := range matchPlayers {
+		if p.Name == "" {
+			continue
 		}
+		if reflect.DeepEqual(playerSet[p.Name], XRCPlayer{}) {
+			playerSet[p.Name] = p
+			continue
+		}
+		record := playerSet[p.Name]
+		record.Update(p)
+		playerSet[p.Name] = record
 	}
-	export, _ := json.Marshal(playerSet)
+
+	export, _ := json.Marshal(*seenPlayers)
 	err := ioutil.WriteFile("players.json", export, 0775)
 	if err != nil {
 		fmt.Println("Could not write player master data.")
@@ -254,7 +288,7 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 
 				go updateSchedule(&received, MasterSchedule)
 				go exportMatchData(received)
-				go exportPlayers(received, &PLAYERS)
+				go exportPlayers(received, &PLAYERS, PLAYERSET)
 				go exportMatches(received, &MATCHES)
 			}
 			break

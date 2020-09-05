@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strconv"
 )
 
@@ -51,6 +52,8 @@ var (
 	MATCHES []XRCMatchData
 	// PLAYERS holds the current master list of players seen.
 	PLAYERS []XRCPlayer
+	// PLAYERSET holds the player master list.
+	PLAYERSET = make(map[string]XRCPlayer)
 	// Config is the currently active configuration
 	Config TournamentConfig
 	// MasterSchedule is the currently active event schedule
@@ -114,6 +117,19 @@ func main() {
 			err = json.Unmarshal(playerJSON, &PLAYERS)
 			if err != nil {
 				fmt.Println(err)
+			}
+
+			for _, p := range PLAYERS {
+				if p.Name == "" {
+					continue
+				}
+				if reflect.DeepEqual(PLAYERSET[p.Name], XRCPlayer{}) {
+					PLAYERSET[p.Name] = p
+					continue
+				}
+				player := PLAYERSET[p.Name]
+				player.Update(p)
+				PLAYERSET[p.Name] = player
 			}
 		}
 
