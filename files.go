@@ -285,6 +285,7 @@ func getData(name string) string {
                                 {{range .Matches}}
                                     <tr>
                                         <td>{{.Number}}</td>
+                                        <td></td>
                                         <td>{{.Red1}}</td>
                                         <td>{{.Red2}}</td>
                                         <td>{{.Red3}}</td>

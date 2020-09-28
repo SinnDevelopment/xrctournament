@@ -49,7 +49,7 @@ type Schedule struct {
 }
 
 // IsScheduledMatch handles checks for whether or not a match is within the given schedule.
-func IsScheduledMatch(match *XRCMatchData, schedule Schedule) (bool, ScheduleEntry) {
+func IsScheduledMatch(match *XRCMatchData, schedule *Schedule) (bool, ScheduleEntry) {
 	for _, m := range schedule.Matches {
 		if m.MatchesXRCMatch(*match) {
 			m.MatchData = match

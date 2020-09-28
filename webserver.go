@@ -25,6 +25,8 @@ func startWebserver(port string) {
 	router.GET("/", wIndex)
 	router.GET("/matches/:match", wMatches)
 	router.GET("/matches", wMatches)
+	router.GET("/playoffs", wPlayoffs)
+	router.GET("/quals", wQualifications)
 	router.GET("/rankings", wRankings)
 	router.GET("/api/players", playersAPI)
 	router.GET("/api/matches", matchesAPI)
@@ -37,6 +39,14 @@ func startWebserver(port string) {
 // wIndex is not for glass, home page handler. Could probably be converted to one function for all 3.
 func wIndex(c *gin.Context) {
 	executeContent(c, "home")
+}
+
+func wPlayoffs(c *gin.Context) {
+
+}
+
+func wQualifications(c *gin.Context) {
+
 }
 
 // wMatches handles match view.
@@ -63,20 +73,22 @@ func wRankings(c *gin.Context) {
 }
 
 func playersAPI(c *gin.Context) {
-	c.JSON(http.StatusOK, PLAYERSET)
+	c.Status(http.StatusUnauthorized)
+
 }
 func matchesAPI(c *gin.Context) {
-	c.JSON(http.StatusOK, MATCHES)
+	c.Status(http.StatusUnauthorized)
+
 }
 func scheduleAPI(c *gin.Context) {
-	c.JSON(http.StatusOK, MasterSchedule)
+	c.Status(http.StatusUnauthorized)
 }
 
 // executeContent handles data display for all pages.
 func executeContent(c *gin.Context, page string) {
 	data := WebData{
 		TConf:    &Config,
-		Schedule: &MasterSchedule,
+		Schedule: MasterSchedule,
 		Matches:  MATCHES,
 		Players:  PLAYERSET,
 		Page:     page,

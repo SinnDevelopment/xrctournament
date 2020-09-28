@@ -18,7 +18,7 @@ type TournamentConfig struct {
 	MatchConfig     MatchConfig `json:"matchConfig"`
 	TwitchChannel   string      `json:"twitchChannel"`
 	WebserverPort   int         `json:"webserverPort"`
-	WebsiteUrl      string      `json:"websiteUrl"`
+	WebsiteURL      string      `json:"websiteUrl"`
 }
 
 // MatchConfig holds match specific configuration data.
@@ -37,7 +37,7 @@ var (
 		EnableWebserver: true,
 		FileReadSpeed:   5,
 		MatchDataDir:    "./",
-		WebsiteUrl:      "localhost",
+		WebsiteURL:      "localhost",
 		MatchConfig: MatchConfig{
 			LogfileDirectory:      "./",
 			PlayoffsEnabled:       true,
@@ -56,8 +56,12 @@ var (
 	PLAYERSET = make(map[string]XRCPlayer)
 	// Config is the currently active configuration
 	Config TournamentConfig
+	// QualSchedule is the imported qual schedule
+	QualSchedule Schedule
+	// PlayoffSchedule is the imported playoff scheule
+	PlayoffSchedule Schedule
 	// MasterSchedule is the currently active event schedule
-	MasterSchedule Schedule
+	MasterSchedule *Schedule
 )
 
 func main() {
@@ -135,9 +139,13 @@ func main() {
 
 		// Qualifications and Playoffs are only usable when in webserver mode.
 		if Config.MatchConfig.QualificationsEnabled {
-			MasterSchedule = ImportSchedule(Config.MatchConfig.QualSchedule)
+			QualSchedule = ImportSchedule(Config.MatchConfig.QualSchedule)
+		}
+		if Config.MatchConfig.PlayoffsEnabled {
+			PlayoffSchedule = ImportSchedule(Config.MatchConfig.PlayoffSchedule)
 		}
 
+		setVersion()
 		go XRCDataHandler(Config.FileReadSpeed, quit)
 		startWebserver(strconv.Itoa(Config.WebserverPort))
 
@@ -145,4 +153,8 @@ func main() {
 		// If the webserver is not enabled, we must block the main thread from exiting with the datahandler.
 		XRCDataHandler(Config.FileReadSpeed, quit)
 	}
+}
+
+func setVersion() {
+	Config.CompetitionName = DefaultConfig.CompetitionName
 }

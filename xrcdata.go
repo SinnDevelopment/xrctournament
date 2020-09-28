@@ -111,7 +111,7 @@ func (p *XRCPlayer) Update(o XRCPlayer) {
 
 // Equals replaces deep reflection
 func (p *XRCPlayer) Equals(o XRCPlayer) bool {
-	return p.Name == o.Name && len(p.OPR) == len(o.OPR)
+	return p.Name == o.Name
 }
 
 // exportMatchData writes out the per-match log files to the same directory as the
@@ -165,10 +165,6 @@ func exportMatches(match XRCMatchData, matches *[]XRCMatchData) {
 		fmt.Println(err)
 	}
 
-}
-
-func updateSchedule(match *XRCMatchData, schedule Schedule) {
-	IsScheduledMatch(match, schedule)
 }
 
 // readMatchData handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
@@ -286,7 +282,7 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 				fmt.Println("Received: ", received)
 				previousMatch = received
 
-				go updateSchedule(&received, MasterSchedule)
+				go IsScheduledMatch(&received, MasterSchedule)
 				go exportMatchData(received)
 				go exportPlayers(received, &PLAYERS, PLAYERSET)
 				go exportMatches(received, &MATCHES)

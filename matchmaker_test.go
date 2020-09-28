@@ -27,7 +27,3 @@ func TestImportSchedule_3v3(t *testing.T) {
 		t.Fail()
 	}
 }
-
-func TestImportSchedule_2v2(t *testing.T) {
-
-}
