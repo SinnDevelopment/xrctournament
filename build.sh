@@ -16,4 +16,3 @@ then
 else
     go build -v -ldflags "-s -w" -o $filename
 fi
-
