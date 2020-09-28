@@ -69,7 +69,7 @@ func ImportSchedule(file string) (schedule Schedule) {
 		return
 	}
 	rows, err := csv.NewReader(f).ReadAll()
-	f.Close()
+	defer f.Close()
 	if err != nil {
 		log.Fatal(err)
 	}

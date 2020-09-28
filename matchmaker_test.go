@@ -10,9 +10,9 @@ import (
 func TestImportSchedule_3v3(t *testing.T) {
 	expected := Schedule{
 		Matches: []ScheduleEntry{
-			ScheduleEntry{Number: 1, Red1: "Red1", Red2: "Red2", Red3: "Red3",
+			{Number: 1, Red1: "Red1", Red2: "Red2", Red3: "Red3",
 				Blue1: "Blue1", Blue2: "Blue2", Blue3: "Blue3", Completed: false, MatchData: nil, Time: time.Unix(0, 0)},
-			ScheduleEntry{Number: 2, Red1: "Red1-2", Red2: "Red2-2", Red3: "Red3-2",
+			{Number: 2, Red1: "Red1-2", Red2: "Red2-2", Red3: "Red3-2",
 				Blue1: "Blue1-2", Blue2: "Blue2-2", Blue3: "Blue3-2", Completed: false, MatchData: nil, Time: time.Unix(1, 0)},
 		},
 	}

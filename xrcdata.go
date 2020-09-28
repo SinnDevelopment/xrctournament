@@ -103,10 +103,10 @@ func (p *XRCPlayer) Update(o XRCPlayer) {
 		return
 	}
 
-	p.Wins = o.Wins
-	p.Ties = o.Ties
-	p.Losses = o.Losses
-	p.OPR = o.OPR
+	p.Wins += o.Wins
+	p.Ties += o.Ties
+	p.Losses += o.Losses
+	p.OPR = append(p.OPR, o.OPR...)
 }
 
 // Equals replaces deep reflection
@@ -260,6 +260,25 @@ func readMatchData(dataChannel chan XRCMatchData) {
 		case "BlueADJ.txt":
 			dataRead.BlueAdjust, _ = strconv.Atoi(string(value))
 			break
+		}
+	}
+	if dataRead.RedScore > dataRead.BlueScore {
+		for _, p := range dataRead.RedAlliance {
+			p.Wins += 1
+		}
+		for _, p := range dataRead.BlueAlliance {
+			p.Losses += 1
+		}
+	} else if dataRead.BlueScore > dataRead.RedScore {
+		for _, p := range dataRead.BlueAlliance {
+			p.Wins += 1
+		}
+		for _, p := range dataRead.RedAlliance {
+			p.Losses += 1
+		}
+	} else {
+		for _, p := range append(dataRead.RedAlliance, dataRead.BlueAlliance...) {
+			p.Ties += 1
 		}
 	}
 	dataRead.Completed = time.Now()
