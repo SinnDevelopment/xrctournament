@@ -154,7 +154,3 @@ func main() {
 		XRCDataHandler(Config.FileReadSpeed, quit)
 	}
 }
-
-func setVersion() {
-	Config.CompetitionName = DefaultConfig.CompetitionName
-}
