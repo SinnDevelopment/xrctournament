@@ -47,3 +47,10 @@ func matchesAPI(c *gin.Context) {
 func scheduleAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, MasterSchedule)
 }
+func wPlayoffs(c *gin.Context) {
+
+}
+
+func wQualifications(c *gin.Context) {
+
+}

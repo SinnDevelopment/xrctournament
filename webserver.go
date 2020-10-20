@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"strconv"
 	"text/template"
 
 	"github.com/gin-gonic/gin"
