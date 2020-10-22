@@ -2,6 +2,8 @@
 
 package main
 
+import "C"
+
 func setVersion() {
 
 }

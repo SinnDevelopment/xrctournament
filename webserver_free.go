@@ -1,6 +1,13 @@
-// +build free
+// +build free2
 
 package main
+
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+)
 
 // wIndex is not for glass, home page handler. Could probably be converted to one function for all 3.
 func wIndex(c *gin.Context) {
