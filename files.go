@@ -1,3 +1,5 @@
+// +build pro free
+
 package main
 
 // Go does not support resources, all embedded files must be hardcoded here.

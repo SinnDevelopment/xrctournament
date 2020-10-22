@@ -1,4 +1,4 @@
-// +build free2
+// +build free
 
 package main
 

@@ -1,3 +1,5 @@
+// +build pro free
+
 package main
 
 import (
