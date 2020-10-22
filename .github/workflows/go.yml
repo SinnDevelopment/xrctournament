@@ -31,7 +31,7 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v -tags free .
+      run: go build -v -tags pro .
 
     - name: Test
       run: go test -v .
