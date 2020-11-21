@@ -1,0 +1,34 @@
+{{template "header" . }}
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{.TConf.CompetitionName}}</h1>
+            </div>
+
+            <h2>Rankings</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm" id="xrcdata">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>RP</th>
+                        <th>OPR</th>
+                        <th>W/L/T</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range $index, $element := .Players}}
+                        <tr>
+                            <td>#</td>
+                            <td>{{.Name}}</td>
+                            <td>{{rankPoints $element}}</td>
+                            <td>{{avgOPR $element}}</td>
+                            <td>{{.Wins}}/{{.Losses}}/{{.Ties}}</td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </main>
+{{template "footer" . }}

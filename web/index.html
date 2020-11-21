@@ -1,0 +1,26 @@
+{{template "header" . }}
+<div class="container-fluid">
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">{{.TConf.CompetitionName}}</h1>
+        </div>
+        <!-- Add a placeholder for the Twitch embed -->
+        <center>
+            <div id="twitch-embed"></div>
+        </center>
+        <script src="https://embed.twitch.tv/embed/v1.js"></script>
+
+        <!-- Create a Twitch.Embed object that will render within the "twitch-embed" root element. -->
+        <script
+                type="text/javascript">
+            new Twitch.Embed("twitch-embed", {
+                width: 1280,
+                height: 720,
+                channel: "{{.TConf.TwitchChannel}}",
+                parent: ["{{.TConf.WebsiteUrl}}"]
+            });
+        </script>
+    </main>
+</div>
+{{template "footer" . }}
