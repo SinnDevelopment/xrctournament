@@ -1,4 +1,4 @@
-// +build pro
+// +build pro debug
 
 package main
 

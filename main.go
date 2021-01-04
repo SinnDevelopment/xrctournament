@@ -1,4 +1,4 @@
-// +build pro free
+// +build pro free debug
 
 package main
 
@@ -99,6 +99,18 @@ func main() {
 
 	if Config.EnableWebserver {
 
+		// Qualifications and Playoffs are only usable when in webserver mode.
+		if Config.MatchConfig.QualificationsEnabled {
+			QualSchedule = ImportSchedule(Config.MatchConfig.QualSchedule)
+			QualSchedule.Type = "Qualification"
+			MasterSchedule = &QualSchedule
+		}
+		if Config.MatchConfig.PlayoffsEnabled {
+			PlayoffSchedule = ImportSchedule(Config.MatchConfig.PlayoffSchedule)
+			PlayoffSchedule.Type = "Playoff"
+			MasterSchedule = &PlayoffSchedule
+		}
+
 		usePlayers := true
 		useMatches := true
 
@@ -118,6 +130,27 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
+
+			debug("Read in matches successfully. Parsing to find scheduled matches.")
+			expected := 0
+			for _, m := range MATCHES {
+				matchFound, schedule := IsScheduledMatch(&m, MasterSchedule.Matches)
+				if matchFound && !MasterSchedule.Matches[schedule].Completed {
+					expected++
+					MasterSchedule.Matches[schedule].Completed = true
+					MasterSchedule.Matches[schedule].MatchData = &m
+				}
+			}
+
+			imported := 0
+			for _, m := range MasterSchedule.Matches {
+				if m.MatchData != nil {
+					imported++
+				}
+			}
+			fmt.Println(MasterSchedule)
+			debug("Real Scheduled matches found that were completed: " + strconv.Itoa(imported))
+			debug("Potentially Matching Scheduled matches found that were completed: " + strconv.Itoa(expected))
 		}
 		if usePlayers {
 			err = json.Unmarshal(playerJSON, &PLAYERS)
@@ -125,26 +158,22 @@ func main() {
 				fmt.Println(err)
 			}
 
+			debug("Reading in master player lists.")
 			for _, p := range PLAYERS {
 				if p.Name == "" {
+					debug("Found player with empty string name. Likely a non-full match.")
 					continue
 				}
 				if reflect.DeepEqual(PLAYERSET[p.Name], XRCPlayer{}) {
+					debug("Found new player.")
 					PLAYERSET[p.Name] = p
 					continue
 				}
+				debug("Found player that already exists. " + p.Name)
 				player := PLAYERSET[p.Name]
 				player.Update(p)
 				PLAYERSET[p.Name] = player
 			}
-		}
-
-		// Qualifications and Playoffs are only usable when in webserver mode.
-		if Config.MatchConfig.QualificationsEnabled {
-			QualSchedule = ImportSchedule(Config.MatchConfig.QualSchedule)
-		}
-		if Config.MatchConfig.PlayoffsEnabled {
-			PlayoffSchedule = ImportSchedule(Config.MatchConfig.PlayoffSchedule)
 		}
 
 		setVersion()

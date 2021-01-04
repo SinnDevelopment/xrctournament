@@ -14,11 +14,7 @@ func wIndex(c *gin.Context) {
 	executeContent(c, "home")
 }
 
-func wPlayoffs(c *gin.Context) {
-
-}
-
-func wQualifications(c *gin.Context) {
+func wSchedule(c *gin.Context) {
 
 }
 

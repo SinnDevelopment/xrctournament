@@ -1,4 +1,4 @@
-// +build pro free
+// +build pro free debug
 
 package main
 
@@ -51,15 +51,23 @@ type Schedule struct {
 }
 
 // IsScheduledMatch handles checks for whether or not a match is within the given schedule.
-func IsScheduledMatch(match *XRCMatchData, schedule *Schedule) (bool, ScheduleEntry) {
-	for _, m := range schedule.Matches {
-		if m.MatchesXRCMatch(*match) {
-			m.MatchData = match
-			m.Completed = true
-			return true, m
+func IsScheduledMatch(match *XRCMatchData, schedule []ScheduleEntry) (bool, int) {
+	debug("Checking whether match " + match.Summary() + " schedule schedule.")
+	ret := false
+	index := 0
+	for i, s := range schedule {
+		if s.MatchesXRCMatch(*match) {
+			s.MatchData = match
+			s.Completed = true
+			debug("Match found. Updating.")
+			ret = true
+			index = i
 		}
 	}
-	return false, ScheduleEntry{}
+	if !ret {
+		debug("No match found for " + match.Summary())
+	}
+	return ret, index
 }
 
 // ImportSchedule handles conversion of the csv of matches into the ScheduleEntry and Schedule structs.
@@ -70,6 +78,7 @@ func ImportSchedule(file string) (schedule Schedule) {
 		log.Fatal(err)
 		return
 	}
+	debug("Found schedule file: " + file)
 	rows, err := csv.NewReader(f).ReadAll()
 	defer f.Close()
 	if err != nil {
@@ -92,6 +101,7 @@ func ImportSchedule(file string) (schedule Schedule) {
 			Blue2:  row[6],
 			Blue3:  row[7],
 		}
+		debug("Valid formatted schedule entry.")
 		schedule.Matches = append(schedule.Matches, scheduleEntry)
 		currentMatchTime = currentMatchTime.Add(5 * time.Minute)
 	}

@@ -1,4 +1,4 @@
-// +build pro free
+// +build pro free debug
 
 package main
 
@@ -39,6 +39,19 @@ type XRCMatchData struct {
 	RedAlliance      []XRCPlayer
 	BlueAlliance     []XRCPlayer
 	Completed        time.Time
+}
+
+func (m *XRCMatchData) Summary() string {
+	ret := "["
+	for _, p := range m.RedAlliance {
+		ret += "| |" + p.Name
+	}
+	ret += "]["
+	for _, p := range m.BlueAlliance {
+		ret += "| |" + p.Name
+	}
+	ret += "]"
+	return ret
 }
 
 func (m *XRCMatchData) isMatchFinished() bool {
@@ -305,7 +318,7 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 				fmt.Println("Received: ", received)
 				previousMatch = received
 
-				go IsScheduledMatch(&received, MasterSchedule)
+				go IsScheduledMatch(&received, MasterSchedule.Matches)
 				go writeMatch(received)
 				go writePlayers(received, &PLAYERS, PLAYERSET)
 				go writeMatches(received, &MATCHES)

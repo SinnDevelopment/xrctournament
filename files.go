@@ -1,4 +1,4 @@
-// +build pro free
+// +build pro free debug
 
 package main
 

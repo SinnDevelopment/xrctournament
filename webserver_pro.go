@@ -1,4 +1,4 @@
-// +build pro
+// +build pro debug
 
 package main
 
@@ -47,10 +47,7 @@ func matchesAPI(c *gin.Context) {
 func scheduleAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, MasterSchedule)
 }
-func wPlayoffs(c *gin.Context) {
-
-}
-
-func wQualifications(c *gin.Context) {
+func wSchedule(c *gin.Context) {
+	executeContent(c, "schedule")
 
 }

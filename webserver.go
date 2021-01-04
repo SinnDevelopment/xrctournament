@@ -1,4 +1,4 @@
-// +build free pro
+// +build free pro debug
 
 package main
 
@@ -25,8 +25,7 @@ func startWebserver(port string) {
 	router.GET("/", wIndex)
 	router.GET("/matches/:match", wMatches)
 	router.GET("/matches", wMatches)
-	router.GET("/playoffs", wPlayoffs)
-	router.GET("/quals", wQualifications)
+	router.GET("/schedule", wSchedule)
 	router.GET("/rankings", wRankings)
 	router.GET("/api/players", playersAPI)
 	router.GET("/api/matches", matchesAPI)
