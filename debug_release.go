@@ -1,4 +1,4 @@
-// +build free
+// +build free pro
 
 package main
 
