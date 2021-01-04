@@ -13,7 +13,7 @@ filename="xrctournament_$version$extension"
 
 if [ "$version" == "pro" ]
 then
-    go1.16beta1 build -v -tags pro -ldflags "-s -w" -o "$filename"
+    go build -v -tags pro -ldflags "-s -w" -o "$filename"
 else
-    go1.16beta1 build -v -tags free -ldflags "-s -w" -o "$filename"
+    go build -v -tags free -ldflags "-s -w" -o "$filename"
 fi
