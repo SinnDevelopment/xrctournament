@@ -68,7 +68,7 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 		m.RedAdjust == o.RedAdjust &&
 		m.Timer == m.Timer &&
 		m.MatchStatus == o.MatchStatus
-		//&& red && blue
+	//&& red && blue
 	return equal
 }
 
@@ -116,9 +116,9 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 	return p.Name == o.Name
 }
 
-// exportMatchData writes out the per-match log files to the same directory as the
+// writeMatch writes out the per-match log files to the same directory as the
 // executable is being run from.
-func exportMatchData(data XRCMatchData) {
+func writeMatch(data XRCMatchData) {
 	export, _ := json.Marshal(data)
 	path := filepath.FromSlash(Config.MatchConfig.LogfileDirectory + "/" + strconv.FormatInt(time.Now().Unix(), 10) + ".json")
 	err := ioutil.WriteFile(path, export, 0775)
@@ -128,8 +128,8 @@ func exportMatchData(data XRCMatchData) {
 	}
 }
 
-// exportPlayers writes to disk the contents of the passed player list.
-func exportPlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[string]XRCPlayer) {
+// writePlayers writes to disk the contents of the passed player list.
+func writePlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[string]XRCPlayer) {
 	// Need to parse and deduplicate.
 
 	matchPlayers := append(match.BlueAlliance, match.RedAlliance...)
@@ -157,8 +157,8 @@ func exportPlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[s
 
 }
 
-// exportMatches writes to disk the contents of the recorded matches.
-func exportMatches(match XRCMatchData, matches *[]XRCMatchData) {
+// writeMatches writes to disk the contents of the recorded matches.
+func writeMatches(match XRCMatchData, matches *[]XRCMatchData) {
 	*matches = append(*matches, match)
 	export, _ := json.Marshal(*matches)
 	err := ioutil.WriteFile("matches.json", export, 0775)
@@ -264,23 +264,25 @@ func readMatchData(dataChannel chan XRCMatchData) {
 			break
 		}
 	}
-	if dataRead.RedScore > dataRead.BlueScore {
-		for _, p := range dataRead.RedAlliance {
-			p.Wins += 1
-		}
-		for _, p := range dataRead.BlueAlliance {
-			p.Losses += 1
-		}
-	} else if dataRead.BlueScore > dataRead.RedScore {
-		for _, p := range dataRead.BlueAlliance {
-			p.Wins += 1
-		}
-		for _, p := range dataRead.RedAlliance {
-			p.Losses += 1
-		}
-	} else {
-		for _, p := range append(dataRead.RedAlliance, dataRead.BlueAlliance...) {
-			p.Ties += 1
+	if dataRead.isMatchFinished() {
+		if dataRead.RedScore > dataRead.BlueScore {
+			for _, p := range dataRead.RedAlliance {
+				p.Wins += 1
+			}
+			for _, p := range dataRead.BlueAlliance {
+				p.Losses += 1
+			}
+		} else if dataRead.BlueScore > dataRead.RedScore {
+			for _, p := range dataRead.BlueAlliance {
+				p.Wins += 1
+			}
+			for _, p := range dataRead.RedAlliance {
+				p.Losses += 1
+			}
+		} else {
+			for _, p := range append(dataRead.RedAlliance, dataRead.BlueAlliance...) {
+				p.Ties += 1
+			}
 		}
 	}
 	dataRead.Completed = time.Now()
@@ -304,9 +306,9 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 				previousMatch = received
 
 				go IsScheduledMatch(&received, MasterSchedule)
-				go exportMatchData(received)
-				go exportPlayers(received, &PLAYERS, PLAYERSET)
-				go exportMatches(received, &MATCHES)
+				go writeMatch(received)
+				go writePlayers(received, &PLAYERS, PLAYERSET)
+				go writeMatches(received, &MATCHES)
 			}
 			break
 		case <-ticker.C:

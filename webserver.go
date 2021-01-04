@@ -45,7 +45,7 @@ func executeContent(c *gin.Context, page string) {
 		Players:  PLAYERSET,
 		Page:     page,
 	}
-	html := getData("index")
+	html := getData(page)
 	tmpl, _ := template.New(page).Funcs(template.FuncMap{
 		"avgOPR": func(p XRCPlayer) int {
 			if len(p.OPR) == 0 {

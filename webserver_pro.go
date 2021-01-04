@@ -12,7 +12,7 @@ import (
 
 // wIndex is not for glass, home page handler. Could probably be converted to one function for all 3.
 func wIndex(c *gin.Context) {
-	executeContent(c, "home")
+	executeContent(c, "index")
 }
 
 // wMatches handles match view.

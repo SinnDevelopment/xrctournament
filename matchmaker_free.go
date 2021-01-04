@@ -1,3 +1,0 @@
-// +build free
-
-package main

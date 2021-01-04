@@ -1,123 +1,44 @@
 {{template "header" . }}
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-    {{if eq .Page "home" }}
-        <div
-                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">{{.TConf.CompetitionName}}</h1>
-        </div>
-        <!-- Add a placeholder for the Twitch embed -->
-        <div id="twitch-embed"></div>
-        <script src="https://embed.twitch.tv/embed/v1.js"></script>
+    <h2>Matches</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm" id="xrcdata">
+            <thead>
 
-        <!-- Create a Twitch.Embed object that will render within the "twitch-embed" root element. -->
-        <script
-                type="text/javascript">
-            new Twitch.Embed("twitch-embed", {
-                width: 854,
-                height: 480,
-                channel: "{{.TConf.TwitchChannel}}",
-                parent: ["{{.TConf.WebsiteUrl}}"]
-            });
-        </script>
-    {{end}}
-    {{if eq .Page "rankings" }}
-        <h2>Rankings</h2>
-        <div class="table-responsive">
-            <table class="table table-striped table-sm" id="xrcdata">
-                <thead>
+            <tr>
+                <th>#</th>
+                <th>Time</th>
+                <th>Red Alliance</th>
+                <th>Blue Alliance</th>
+                <th>Red Score</th>
+                <th>Blue Score</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            {{range .Matches}}
                 <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>RP</th>
-                    <th>OPR</th>
-                    <th>W/L/T</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{range $index, $element := .Players}}
-                    <tr>
-                        <td>#</td>
-                        <td>{{.Name}}</td>
-                        <td>{{rankPoints $element}}</td>
-                        <td>{{avgOPR $element}}</td>
-                        <td>{{.Wins}}/{{.Losses}}/{{.Ties}}</td>
-                    </tr>
-                {{end}}
-                </tbody>
-            </table>
-        </div>
-    {{end}}
-    {{if eq .Page "matches" }}
-        <h2>Matches</h2>
-        <div class="table-responsive">
-            <table class="table table-striped table-sm" id="xrcdata">
-                <thead>
-
-                <tr>
-                    <th>#</th>
-                    <th>Time</th>
-                    {{if or .TConf.MatchConfig.QualificationsEnabled .TConf.MatchConfig.PlayoffsEnabled}}
-                        <th>R1</th>
-                        <th>R2</th>
-                        <th>R3</th>
-                        <th>B1</th>
-                        <th>B2</th>
-                        <th>B3</th>
-                    {{else}}
-                        <th>Red Alliance</th>
-                        <th>Blue Alliance</th>
-                    {{end}}
-
-                    <th>Red Score</th>
-                    <th>Blue Score</th>
-
-                </tr>
-                </thead>
-                <tbody>
-
-                {{if or .TConf.MatchConfig.QualificationsEnabled .TConf.MatchConfig.PlayoffsEnabled}}
-                    {{with .Schedule}}
-                        {{range .Matches}}
-                            <tr>
-                                <td>{{.Number}}</td>
-                                <td></td>
-                                <td>{{.Red1}}</td>
-                                <td>{{.Red2}}</td>
-                                <td>{{.Red3}}</td>
-                                <td>{{.Blue1}}</td>
-                                <td>{{.Blue2}}</td>
-                                <td>{{.Blue3}}</td>
-                                {{with .MatchData}}
-                                    <td>{{.RedScore}}</td>
-                                    <td>{{.BlueScore}}</td>
-                                {{end}}
-                            </tr>
+                    <td><a href="/matches/$index">$matchnum</a></td>
+                    <td>{{.Completed}}</td>
+                    <td>
+                        {{range .RedAlliance}}
+                            {{.Name}}
                         {{end}}
-                    {{end}}
-                {{else}}
-                    {{range $index, $element := .Matches}}
-                        <tr>
-                            <td><a href="/matches/{{$index}}">{{$index}}</a></td>
-                            <td>{{.Completed}}</td>
-                            <td>
-                                {{range .RedAlliance}}
-                                    {{.Name}}
-                                {{end}}
-                            </td>
-                            <td>
-                                {{range .BlueAlliance}}
-                                    {{.Name}}
-                                {{end}}
-                            </td>
-                            <td>{{.RedScore}}</td>
-                            <td>{{.BlueScore}}</td>
-                        </tr>
-                    {{end}}
-                {{end}}
-                </tbody>
-            </table>
-        </div>
-    {{end}}
+                    </td>
+                    <td>
+                        {{range .BlueAlliance}}
+                            {{.Name}}
+                        {{end}}
+                    </td>
+                    <td>{{.RedScore}}</td>
+                    <td>{{.BlueScore}}</td>
+                </tr>
+            {{end}}
+
+            </tbody>
+        </table>
+    </div>
 </main>
 {{template "footer" . }}
