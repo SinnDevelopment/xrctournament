@@ -8,7 +8,7 @@
     "matchDataDir": "./",
     "matchConfig": {
         "qualificationsEnabled": true,
-        "qualSchedule": "testdata/schedule.csv",
+        "qualSchedule": "schedule.csv",
         "playoffsEnabled": false,
         "playoffSchedule": "elims.csv",
         "logfileDirectory": "./"

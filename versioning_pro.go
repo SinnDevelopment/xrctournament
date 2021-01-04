@@ -3,7 +3,7 @@
 package main
 
 //// Required to support Codemeter.
-import "C"
+//import "C"
 
 func setVersion() {
 
