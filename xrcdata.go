@@ -182,6 +182,41 @@ func writeMatches(match XRCMatchData, matches *[]XRCMatchData) {
 
 }
 
+func updateWLT(match XRCMatchData, players map[string]XRCPlayer) {
+	redWin := match.RedScore > match.BlueScore
+	tie := match.RedScore == match.BlueScore
+
+	if redWin {
+		for _, v := range match.RedAlliance {
+			v.Update(players[v.Name])
+			v.Wins += 1
+			players[v.Name] = v
+		}
+		for _, v := range match.BlueAlliance {
+			v.Update(players[v.Name])
+			v.Losses += 1
+			players[v.Name] = v
+		}
+	} else if tie {
+		for _, v := range append(match.RedAlliance, match.BlueAlliance...) {
+			v.Update(players[v.Name])
+			v.Ties += 1
+			players[v.Name] = v
+		}
+	} else {
+		for _, v := range match.BlueAlliance {
+			v.Update(players[v.Name])
+			v.Wins += 1
+			players[v.Name] = v
+		}
+		for _, v := range match.RedAlliance {
+			v.Update(players[v.Name])
+			v.Losses += 1
+			players[v.Name] = v
+		}
+	}
+}
+
 // readMatchData handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
 func readMatchData(dataChannel chan XRCMatchData) {
 	dataRead := XRCMatchData{}
@@ -321,6 +356,7 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 				go IsScheduledMatch(&received, MasterSchedule.Matches)
 				go writeMatch(received)
 				go writePlayers(received, &PLAYERS, PLAYERSET)
+				go updateWLT(received, PLAYERSET)
 				go writeMatches(received, &MATCHES)
 			}
 			break

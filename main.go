@@ -139,6 +139,7 @@ func main() {
 					expected++
 					MasterSchedule.Matches[schedule].Completed = true
 					MasterSchedule.Matches[schedule].MatchData = &m
+					updateWLT(m, PLAYERSET)
 				}
 			}
 
