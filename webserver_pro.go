@@ -49,5 +49,4 @@ func scheduleAPI(c *gin.Context) {
 }
 func wSchedule(c *gin.Context) {
 	executeContent(c, "schedule")
-
 }
