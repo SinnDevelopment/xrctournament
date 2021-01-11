@@ -1,4 +1,12 @@
 {{template "header" . }}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#xrcdata').DataTable({
+            "pageLength": 50,
+            "order": [[1, "desc"], [2, "desc"]]
+        });
+    });
+</script>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
             <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -10,7 +18,6 @@
                 <table class="table table-striped table-sm" id="xrcdata">
                     <thead>
                     <tr>
-                        <th>#</th>
                         <th>Name</th>
                         <th>RP</th>
                         <th>OPR</th>
@@ -20,7 +27,6 @@
                     <tbody>
                     {{range $index, $element := .Players}}
                         <tr>
-                            <td>#</td>
                             <td>{{.Name}}</td>
                             <td>{{rankPoints $element}}</td>
                             <td>{{avgOPR $element}}</td>

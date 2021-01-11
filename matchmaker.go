@@ -7,21 +7,23 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
 // ScheduleEntry is a Match paired with a time. Linked to a match data result when a match is completed.
 type ScheduleEntry struct {
-	Number    int
-	Time      time.Time
-	Red1      string
-	Red2      string
-	Red3      string
-	Blue1     string
-	Blue2     string
-	Blue3     string
-	Completed bool
-	MatchData *XRCMatchData
+	Number      int
+	Time        time.Time
+	Red1        string
+	Red2        string
+	Red3        string
+	Blue1       string
+	Blue2       string
+	Blue3       string
+	Completed   bool
+	MatchData   *XRCMatchData
+	MasterIndex int
 }
 
 // MatchesXRCMatch checks if the expected alliance members are the ones that were reported from the match data.
@@ -52,7 +54,7 @@ type Schedule struct {
 
 // IsScheduledMatch handles checks for whether or not a match is within the given schedule.
 func IsScheduledMatch(match *XRCMatchData, schedule []ScheduleEntry) (bool, int) {
-	debug("Checking whether match " + match.Summary() + " schedule schedule.")
+	debug("Checking whether match " + match.Summary() + " is scheduled.")
 	ret := false
 	index := 0
 	for i, s := range schedule {
@@ -86,7 +88,6 @@ func ImportSchedule(file string) (schedule Schedule) {
 	}
 	currentMatchTime := time.Now()
 	for _, row := range rows {
-
 		matchNum, _ := strconv.Atoi(row[0])
 		unixTS, _ := strconv.Atoi(row[1])
 		timeRaw := time.Unix(int64(unixTS), 0)
@@ -94,12 +95,12 @@ func ImportSchedule(file string) (schedule Schedule) {
 		scheduleEntry := ScheduleEntry{
 			Number: matchNum + 1,
 			Time:   timeRaw,
-			Red1:   row[2],
-			Red2:   row[3],
-			Red3:   row[4],
-			Blue1:  row[5],
-			Blue2:  row[6],
-			Blue3:  row[7],
+			Red1:   strings.TrimSpace(row[2]),
+			Red2:   strings.TrimSpace(row[3]),
+			Red3:   strings.TrimSpace(row[4]),
+			Blue1:  strings.TrimSpace(row[5]),
+			Blue2:  strings.TrimSpace(row[6]),
+			Blue3:  strings.TrimSpace(row[7]),
 		}
 		debug("Valid formatted schedule entry.")
 		schedule.Matches = append(schedule.Matches, scheduleEntry)

@@ -26,8 +26,7 @@ func wMatches(c *gin.Context) {
 			executeContent(c, "matches")
 			return
 		}
-		match := MATCHES[num]
-		c.JSON(http.StatusOK, match)
+		executeContent(c, "match:"+strconv.Itoa(num))
 	} else {
 		executeContent(c, "matches")
 	}

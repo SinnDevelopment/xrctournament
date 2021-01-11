@@ -1,4 +1,12 @@
 {{template "header" .}}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#xrcdata').DataTable({
+            "pageLength": 50,
+            "order": [[0, "asc"]]
+        });
+    });
+</script>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h2 class="h2">{{.TConf.CompetitionName}}</h2>
@@ -24,14 +32,22 @@
             {{range .Schedule.Matches}}
                 <tr>
                     <td>{{.Number}}</td>
-                    <td>{{.Time}}</td>
+                    {{if .Completed}}
+                        <td>{{.MatchData.Completed}}</td>
+                    {{else}}
+                        <td>{{.Time}}</td>
+                    {{end}}
                     <td>{{.Red1}}</td>
                     <td>{{.Red2}}</td>
                     <td>{{.Red3}}</td>
                     <td>{{.Blue1}}</td>
                     <td>{{.Blue2}}</td>
                     <td>{{.Blue3}}</td>
-                    <td>{{.Completed}}</td>
+                    {{if .Completed }}
+                        <td><a href="/matches/{{.MasterIndex}}">Yes</a></td>
+                    {{else}}
+                        <td>No</td>
+                    {{end}}
                 </tr>
             {{end}}
             </tbody>

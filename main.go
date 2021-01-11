@@ -133,12 +133,13 @@ func main() {
 
 			debug("Read in matches successfully. Parsing to find scheduled matches.")
 			expected := 0
-			for _, m := range MATCHES {
+			for i, m := range MATCHES {
 				matchFound, schedule := IsScheduledMatch(&m, MasterSchedule.Matches)
 				if matchFound && !MasterSchedule.Matches[schedule].Completed {
 					expected++
 					MasterSchedule.Matches[schedule].Completed = true
 					MasterSchedule.Matches[schedule].MatchData = &m
+					MasterSchedule.Matches[schedule].MasterIndex = i
 					updateWLT(m, PLAYERSET)
 				}
 			}

@@ -4,6 +4,8 @@ package main
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +18,7 @@ type WebData struct {
 	Matches  []XRCMatchData
 	Players  map[string]XRCPlayer
 	Page     string
+	Param    int
 }
 
 // startWebServer handles initialization and running of the gin webserver.
@@ -37,12 +40,19 @@ func startWebserver(port string) {
 
 // executeContent handles data display for all pages.
 func executeContent(c *gin.Context, page string) {
+	param := 0
+	if strings.Contains(page, ":") {
+		params := strings.Split(page, ":")
+		page = params[0]
+		param, _ = strconv.Atoi(params[1])
+	}
 	data := WebData{
 		TConf:    &Config,
 		Schedule: MasterSchedule,
 		Matches:  MATCHES,
 		Players:  PLAYERSET,
 		Page:     page,
+		Param:    param,
 	}
 	html := getData(page)
 	tmpl, _ := template.New(page).Funcs(template.FuncMap{

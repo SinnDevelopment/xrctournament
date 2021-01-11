@@ -19,7 +19,7 @@ func TestImportSchedule_3v3(t *testing.T) {
 		},
 	}
 
-	schedule := ImportSchedule("testdata/unittest/3v3.csv")
+	schedule := ImportSchedule("unittest/3v3.csv")
 	if !reflect.DeepEqual(expected, schedule) {
 		fmt.Println("Expected schedule for 3v3 was not equal to the imported one.")
 		fmt.Printf("Expected: ")

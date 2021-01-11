@@ -87,11 +87,12 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 
 // XRCPlayer holds the data for a given player in a given match.
 type XRCPlayer struct {
-	Name   string
-	OPR    []int
-	Wins   int
-	Losses int
-	Ties   int
+	Name        string
+	OPR         []int
+	Wins        int
+	Losses      int
+	Ties        int
+	MatchesSeen []int
 }
 
 func (p *XRCPlayer) AvgOPR() int {
@@ -160,7 +161,6 @@ func writePlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[st
 		record.Update(p)
 		playerSet[p.Name] = record
 	}
-
 	export, _ := json.Marshal(*seenPlayers)
 	err := ioutil.WriteFile("players.json", export, 0775)
 	if err != nil {
