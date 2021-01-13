@@ -75,10 +75,12 @@ func (m *XRCMatchData) Equals(o XRCMatchData) bool {
 		m.BluePenalty == o.BluePenalty &&
 		m.BlueScore == o.BlueScore &&
 		m.BlueAdjust == o.BlueAdjust &&
+		m.BlueEnd == o.BlueEnd &&
 		m.RedAuto == o.RedAuto &&
 		m.RedPenalty == o.RedPenalty &&
 		m.RedScore == o.RedScore &&
 		m.RedAdjust == o.RedAdjust &&
+		m.RedEnd == o.RedEnd &&
 		m.Timer == m.Timer &&
 		m.MatchStatus == o.MatchStatus
 	//&& red && blue
@@ -130,23 +132,24 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 	return p.Name == o.Name
 }
 
-// writeMatch writes out the per-match log files to the same directory as the
+// WriteMatchArchive writes out the per-match log files to the same directory as the
 // executable is being run from.
-func writeMatch(data XRCMatchData) {
-	export, _ := json.Marshal(data)
-	path := filepath.FromSlash(Config.MatchConfig.LogfileDirectory + "/" + strconv.FormatInt(time.Now().Unix(), 10) + ".json")
+func (m *XRCMatchData) WriteMatchArchive(basedir string) (path string) {
+	export, _ := json.Marshal(m)
+	path = filepath.FromSlash(basedir + "/" + strconv.FormatInt(time.Now().Unix(), 10) + ".json")
 	err := ioutil.WriteFile(path, export, 0775)
 	if err != nil {
-		fmt.Println("Could not write match archive data.")
+		fmt.Println("Could not write match archive m.")
 		fmt.Println(err)
 	}
+	return
 }
 
-// writePlayers writes to disk the contents of the passed player list.
-func writePlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[string]XRCPlayer) {
+// WritePlayerJSON writes to disk the contents of the passed player list.
+func WritePlayerJSON(m *XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[string]XRCPlayer) {
 	// Need to parse and deduplicate.
 
-	matchPlayers := append(match.BlueAlliance, match.RedAlliance...)
+	matchPlayers := append(m.BlueAlliance, m.RedAlliance...)
 	*seenPlayers = append(*seenPlayers, matchPlayers...)
 
 	for _, p := range matchPlayers {
@@ -170,9 +173,9 @@ func writePlayers(match XRCMatchData, seenPlayers *[]XRCPlayer, playerSet map[st
 
 }
 
-// writeMatches writes to disk the contents of the recorded matches.
-func writeMatches(match XRCMatchData, matches *[]XRCMatchData) {
-	*matches = append(*matches, match)
+// WriteMatchesJSON writes to disk the contents of the recorded matches.
+func WriteMatchesJSON(match *XRCMatchData, matches *[]XRCMatchData) {
+	*matches = append(*matches, *match)
 	export, _ := json.Marshal(*matches)
 	err := ioutil.WriteFile("matches.json", export, 0775)
 	if err != nil {
@@ -182,7 +185,7 @@ func writeMatches(match XRCMatchData, matches *[]XRCMatchData) {
 
 }
 
-func updateWLT(match XRCMatchData, players map[string]XRCPlayer) {
+func UpdateMatchWLT(match *XRCMatchData, players map[string]XRCPlayer) {
 	redWin := match.RedScore > match.BlueScore
 	tie := match.RedScore == match.BlueScore
 
@@ -217,8 +220,8 @@ func updateWLT(match XRCMatchData, players map[string]XRCPlayer) {
 	}
 }
 
-// readMatchData handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
-func readMatchData(dataChannel chan XRCMatchData) {
+// ReadMatchDataFiles handles the main file read loop, getting all the data from the match files at the specified polling rate in the config.
+func ReadMatchDataFiles(dataChannel chan XRCMatchData) {
 	dataRead := XRCMatchData{}
 	files, err := ioutil.ReadDir(Config.MatchDataDir)
 	if err != nil {
@@ -353,15 +356,16 @@ func XRCDataHandler(speed int, quit chan struct{}) {
 				fmt.Println("Received: ", received)
 				previousMatch = received
 
+				go received.WriteMatchArchive(Config.MatchConfig.LogfileDirectory)
+
 				go IsScheduledMatch(&received, MasterSchedule.Matches)
-				go writeMatch(received)
-				go writePlayers(received, &PLAYERS, PLAYERSET)
-				go updateWLT(received, PLAYERSET)
-				go writeMatches(received, &MATCHES)
+				go WritePlayerJSON(&received, &PLAYERS, PLAYERSET)
+				go UpdateMatchWLT(&received, PLAYERSET)
+				go WriteMatchesJSON(&received, &MATCHES)
 			}
 			break
 		case <-ticker.C:
-			go readMatchData(matchData)
+			go ReadMatchDataFiles(matchData)
 			break
 		case <-quit:
 			ticker.Stop()

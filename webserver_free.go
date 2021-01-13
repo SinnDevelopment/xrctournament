@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// wIndex is not for glass, home page handler. Could probably be converted to one function for all 3.
+// wIndex is not for glass, home page handler.
 func wIndex(c *gin.Context) {
 	executeContent(c, "home")
 }

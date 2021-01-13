@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +34,7 @@ func startWebserver(port string) {
 	router.GET("/api/players", playersAPI)
 	router.GET("/api/matches", matchesAPI)
 	router.GET("/api/schedule", scheduleAPI)
-
+	router.GET("/obs", wOBS)
 	http.Handle("/", router)
 	router.Run(":" + port)
 }
@@ -68,6 +69,9 @@ func executeContent(c *gin.Context, page string) {
 		},
 		"rankPoints": func(p XRCPlayer) int {
 			return p.Wins*2 + p.Ties
+		},
+		"time": func() string {
+			return time.Now().String()
 		},
 	}).Parse(html)
 	tmpl.Execute(c.Writer, data)

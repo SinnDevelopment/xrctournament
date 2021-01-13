@@ -140,7 +140,7 @@ func main() {
 					MasterSchedule.Matches[schedule].Completed = true
 					MasterSchedule.Matches[schedule].MatchData = &m
 					MasterSchedule.Matches[schedule].MasterIndex = i
-					updateWLT(m, PLAYERSET)
+					UpdateMatchWLT(&m, PLAYERSET)
 				}
 			}
 

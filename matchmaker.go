@@ -11,6 +11,13 @@ import (
 	"time"
 )
 
+// Schedule is a series of Schedule Entries attached to a type (qual, playoff, practice).
+// Supporting multiple types of matches on the view page, or in the master schedule is not implemented.
+type Schedule struct {
+	Matches []ScheduleEntry
+	Type    string
+}
+
 // ScheduleEntry is a Match paired with a time. Linked to a match data result when a match is completed.
 type ScheduleEntry struct {
 	Number      int
@@ -43,13 +50,6 @@ func (m *ScheduleEntry) MatchesXRCMatch(x XRCMatchData) bool {
 		red = false
 	}
 	return red && blue
-}
-
-// Schedule is a series of Schedule Entries attached to a type (qual, playoff, practice).
-// Supporting multiple types of matches on the view page, or in the master schedule is not implemented.
-type Schedule struct {
-	Matches []ScheduleEntry
-	Type    string
 }
 
 // IsScheduledMatch handles checks for whether or not a match is within the given schedule.

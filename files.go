@@ -19,6 +19,8 @@ var (
 	rankings string
 	//go:embed "web/schedule.html"
 	schedule string
+	//go:embed "web/obs.html"
+	obs string
 	//go:embed "web/template.html"
 	_template string
 )
@@ -35,6 +37,8 @@ func getData(name string) string {
 		return _template + rankings
 	case "schedule":
 		return _template + schedule
+	case "obs":
+		return _template + obs
 	case "template":
 		return _template + _template
 	default:
