@@ -20,10 +20,10 @@ func genFRCSchedule(matches int) {
 	}
 }
 
-// 2v2 matches, using positions 1/2.
+// 2v2 matches.
 func genFTCSchedule(matches int) {
 	for i := 0; i < matches; i++ {
-		fmt.Printf("%d,%d,%s,%s,,%s,%s,\n", i, time.Now().Unix(),
+		fmt.Printf("%d,%d,%s,%s,%s,%s\n", i, time.Now().Unix(),
 			"Team"+strconv.Itoa(i), "Team"+strconv.Itoa(i+1),
 			"Team"+strconv.Itoa(i+2), "Team"+strconv.Itoa(i+3))
 	}

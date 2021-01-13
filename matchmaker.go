@@ -91,17 +91,31 @@ func ImportSchedule(file string) (schedule Schedule) {
 		matchNum, _ := strconv.Atoi(row[0])
 		unixTS, _ := strconv.Atoi(row[1])
 		timeRaw := time.Unix(int64(unixTS), 0)
-
-		scheduleEntry := ScheduleEntry{
-			Number: matchNum + 1,
-			Time:   timeRaw,
-			Red1:   strings.TrimSpace(row[2]),
-			Red2:   strings.TrimSpace(row[3]),
-			Red3:   strings.TrimSpace(row[4]),
-			Blue1:  strings.TrimSpace(row[5]),
-			Blue2:  strings.TrimSpace(row[6]),
-			Blue3:  strings.TrimSpace(row[7]),
+		scheduleEntry := ScheduleEntry{}
+		debug("Row Length:" + strconv.Itoa(len(row)))
+		//
+		if len(row)-2 == 6 {
+			scheduleEntry = ScheduleEntry{
+				Number: matchNum + 1,
+				Time:   timeRaw,
+				Red1:   strings.TrimSpace(row[2]),
+				Red2:   strings.TrimSpace(row[3]),
+				Red3:   strings.TrimSpace(row[4]),
+				Blue1:  strings.TrimSpace(row[5]),
+				Blue2:  strings.TrimSpace(row[6]),
+				Blue3:  strings.TrimSpace(row[7]),
+			}
+		} else if len(row)-2 == 4 {
+			scheduleEntry = ScheduleEntry{
+				Number: matchNum + 1,
+				Time:   timeRaw,
+				Red1:   strings.TrimSpace(row[2]),
+				Red2:   strings.TrimSpace(row[3]),
+				Blue1:  strings.TrimSpace(row[4]),
+				Blue2:  strings.TrimSpace(row[5]),
+			}
 		}
+
 		debug("Valid formatted schedule entry.")
 		schedule.Matches = append(schedule.Matches, scheduleEntry)
 		currentMatchTime = currentMatchTime.Add(5 * time.Minute)
