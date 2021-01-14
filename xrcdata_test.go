@@ -52,7 +52,7 @@ func TestXRCPlayer_AvgOPR(t *testing.T) {
 		MatchesSeen: nil,
 	}
 	if player.AvgOPR() != 5 {
-		t.Fail()
+		t.Fatal("Player average OPR is not correct.")
 	}
 }
 
@@ -67,7 +67,7 @@ func TestXRCPlayer_RP(t *testing.T) {
 	}
 
 	if player.RP() != 3 {
-		t.Fail()
+		t.Fatal("Player RP is not correct.")
 	}
 }
 
@@ -98,11 +98,11 @@ func TestXRCPlayer_Equals(t *testing.T) {
 	}
 
 	if player1.Equals(player3) {
-		t.Fail()
+		t.Fatal("Player 1 & 3 equality check failed.")
 	}
 
 	if !player1.Equals(player2) {
-		t.Fail()
+		t.Fatal("Player 1 & 2 equality check failed.")
 	}
 }
 
@@ -323,13 +323,13 @@ func TestXRCMatchData_Equals(t *testing.T) {
 	}
 
 	if !match1.Equals(match2) {
-		debug("Match 1 does not equal Match 2 - FAIL")
-		t.Fail()
+		t.Fatal("Match 1 does not equal Match 2.")
+
 	}
 
 	if match2.Equals(match3) {
-		debug("Match 2 equals Match 3 - FAIL")
-		t.Fail()
+		t.Fatal("Match 2 equals Match 3.")
+
 	}
 
 }
@@ -407,19 +407,96 @@ func TestXRCMatchData_WriteMatchArchive(t *testing.T) {
 		Completed: time.Now(),
 	}
 
-	path := match.WriteMatchArchive("testdata")
+	path, err := match.WriteMatchArchive("testdata")
+	if err != nil {
+		t.Fatal("Error when writing archive file", err)
+	}
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
-		t.Fail()
+		t.Fatal("Error when reading archive file", err)
 	}
 	filecontents := string(file)
 	debug("Test Match Data Output: " + filecontents)
 	err = os.Remove(path)
 	if err != nil {
-		t.Fail()
+		t.Fatal("Error when removing test files", err)
 	}
 }
 
 func TestXRCMatchData_Summary(t *testing.T) {
-
+	match := XRCMatchData{
+		RedScore:         100,
+		BlueScore:        200,
+		RedAuto:          1,
+		BlueAuto:         2,
+		RedTele:          3,
+		BlueTele:         4,
+		RedEnd:           5,
+		BlueEnd:          6,
+		RedPenalty:       7,
+		RedPenaltyCount:  8,
+		BluePenalty:      9,
+		BluePenaltyCount: 10,
+		RedAdjust:        11,
+		BlueAdjust:       12,
+		Timer:            "0:00",
+		MatchStatus:      "FINISHED",
+		RedAlliance: []XRCPlayer{
+			{
+				Name:        "1",
+				OPR:         nil,
+				Wins:        1,
+				Losses:      0,
+				Ties:        0,
+				MatchesSeen: nil,
+			},
+			{
+				Name:        "2",
+				OPR:         nil,
+				Wins:        0,
+				Losses:      0,
+				Ties:        0,
+				MatchesSeen: nil,
+			},
+			{
+				Name:        "3",
+				OPR:         nil,
+				Wins:        0,
+				Losses:      0,
+				Ties:        0,
+				MatchesSeen: nil,
+			},
+		},
+		BlueAlliance: []XRCPlayer{
+			{
+				Name:        "4",
+				OPR:         nil,
+				Wins:        1,
+				Losses:      0,
+				Ties:        0,
+				MatchesSeen: nil,
+			},
+			{
+				Name:        "5",
+				OPR:         nil,
+				Wins:        0,
+				Losses:      0,
+				Ties:        0,
+				MatchesSeen: nil,
+			},
+			{
+				Name:        "6",
+				OPR:         nil,
+				Wins:        0,
+				Losses:      0,
+				Ties:        0,
+				MatchesSeen: nil,
+			},
+		},
+		Completed: time.Now(),
+	}
+	expected := "[1|2|3][4|5|6]"
+	if expected != match.Summary() {
+		t.Fail()
+	}
 }

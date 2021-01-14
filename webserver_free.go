@@ -15,7 +15,7 @@ func wIndex(c *gin.Context) {
 }
 
 func wSchedule(c *gin.Context) {
-
+	executeContent(c, "schedule")
 }
 
 // wMatches handles match view.
@@ -29,8 +29,7 @@ func wMatches(c *gin.Context) {
 			executeContent(c, "matches")
 			return
 		}
-		match := MATCHES[num]
-		c.JSON(http.StatusOK, match)
+		executeContent(c, "match:"+strconv.Itoa(num))
 	} else {
 		executeContent(c, "matches")
 	}
@@ -50,5 +49,9 @@ func matchesAPI(c *gin.Context) {
 
 }
 func scheduleAPI(c *gin.Context) {
+	c.Status(http.StatusUnauthorized)
+}
+
+func wOBS(c *gin.Context) {
 	c.Status(http.StatusUnauthorized)
 }

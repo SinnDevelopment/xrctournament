@@ -43,12 +43,20 @@ type XRCMatchData struct {
 
 func (m *XRCMatchData) Summary() string {
 	ret := "["
-	for _, p := range m.RedAlliance {
-		ret += "|" + p.Name
+	for i, p := range m.RedAlliance {
+		if i+1 == len(m.RedAlliance) {
+			ret += p.Name
+		} else {
+			ret += p.Name + "|"
+		}
 	}
 	ret += "]["
-	for _, p := range m.BlueAlliance {
-		ret += "|" + p.Name
+	for i, p := range m.BlueAlliance {
+		if i+1 == len(m.BlueAlliance) {
+			ret += p.Name
+		} else {
+			ret += p.Name + "|"
+		}
 	}
 	ret += "]"
 	return ret
@@ -134,10 +142,10 @@ func (p *XRCPlayer) Equals(o XRCPlayer) bool {
 
 // WriteMatchArchive writes out the per-match log files to the same directory as the
 // executable is being run from.
-func (m *XRCMatchData) WriteMatchArchive(basedir string) (path string) {
+func (m *XRCMatchData) WriteMatchArchive(basedir string) (path string, err error) {
 	export, _ := json.Marshal(m)
 	path = filepath.FromSlash(basedir + "/" + strconv.FormatInt(time.Now().Unix(), 10) + ".json")
-	err := ioutil.WriteFile(path, export, 0775)
+	err = ioutil.WriteFile(path, export, 0775)
 	if err != nil {
 		fmt.Println("Could not write match archive m.")
 		fmt.Println(err)
