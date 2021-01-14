@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RELEASE - Pro" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="xrctournament" />
+    <working_directory value="$PROJECT_DIR$/" />
+    <go_parameters value="-i -tags pro" />
+    <envs>
+      <env name="GO111MODULE" value="off" />
+    </envs>
+    <kind value="DIRECTORY" />
+    <filePath value="$PROJECT_DIR$/" />
+    <package value="github.com/sinndevelopment/xrctournament" />
+    <directory value="$PROJECT_DIR$/" />
+    <output_directory value="$PROJECT_DIR$/testdata" />
+    <method v="2" />
+  </configuration>
+</component>

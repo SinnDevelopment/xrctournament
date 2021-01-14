@@ -150,7 +150,7 @@ func main() {
 					imported++
 				}
 			}
-			fmt.Println(MasterSchedule)
+			debug(MasterSchedule)
 			debug("Real Scheduled matches found that were completed: " + strconv.Itoa(imported))
 			debug("Potentially Matching Scheduled matches found that were completed: " + strconv.Itoa(expected))
 		}
@@ -184,6 +184,7 @@ func main() {
 
 	} else {
 		// If the webserver is not enabled, we must block the main thread from exiting with the datahandler.
+		setVersion()
 		XRCDataHandler(Config.FileReadSpeed, quit)
 	}
 }
