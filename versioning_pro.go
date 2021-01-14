@@ -6,5 +6,5 @@ package main
 import "C"
 
 func setVersion() {
-
+	gin.SetMode(gin.ReleaseMode)
 }
