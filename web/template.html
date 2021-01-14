@@ -115,11 +115,13 @@
                             Home
                         </a>
                     </li>
+                    {{if or .TConf.MatchConfig.PlayoffsEnabled .TConf.MatchConfig.QualificationsEnabled }}
                     <li class="nav-item">
                         <a class="nav-link" href="/schedule">
                             Schedule
                         </a>
                     </li>
+                    {{end}}
                     <li class="nav-item">
                         <a class="nav-link" href="/rankings">
                             Rankings

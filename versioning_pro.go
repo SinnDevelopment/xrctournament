@@ -2,7 +2,8 @@
 
 package main
 
-//// Required to support Codemeter.
+// Required to support Codemeter.
+
 import "C"
 import "github.com/gin-gonic/gin"
 

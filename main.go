@@ -136,28 +136,30 @@ func main() {
 				fmt.Println(err)
 			}
 
-			debug("Read in matches successfully. Parsing to find scheduled matches.")
-			expected := 0
-			for i, m := range MATCHES {
-				matchFound, schedule := IsScheduledMatch(&m, MasterSchedule.Matches)
-				if matchFound && !MasterSchedule.Matches[schedule].Completed {
-					expected++
-					MasterSchedule.Matches[schedule].Completed = true
-					MasterSchedule.Matches[schedule].MatchData = &m
-					MasterSchedule.Matches[schedule].MasterIndex = i
-					UpdateMatchWLT(&m, PLAYERSET)
+			if Config.MatchConfig.PlayoffsEnabled || Config.MatchConfig.QualificationsEnabled {
+				debug("Read in matches successfully. Parsing to find scheduled matches.")
+				expected := 0
+				for i, m := range MATCHES {
+					matchFound, schedule := IsScheduledMatch(&m, MasterSchedule.Matches)
+					if matchFound && !MasterSchedule.Matches[schedule].Completed {
+						expected++
+						MasterSchedule.Matches[schedule].Completed = true
+						MasterSchedule.Matches[schedule].MatchData = &m
+						MasterSchedule.Matches[schedule].MasterIndex = i
+						UpdateMatchWLT(&m, PLAYERSET)
+					}
 				}
-			}
 
-			imported := 0
-			for _, m := range MasterSchedule.Matches {
-				if m.MatchData != nil {
-					imported++
+				imported := 0
+				for _, m := range MasterSchedule.Matches {
+					if m.MatchData != nil {
+						imported++
+					}
 				}
+				debug(MasterSchedule)
+				debug("Real Scheduled matches found that were completed: " + strconv.Itoa(imported))
+				debug("Potentially Matching Scheduled matches found that were completed: " + strconv.Itoa(expected))
 			}
-			debug(MasterSchedule)
-			debug("Real Scheduled matches found that were completed: " + strconv.Itoa(imported))
-			debug("Potentially Matching Scheduled matches found that were completed: " + strconv.Itoa(expected))
 		}
 		if usePlayers {
 			err = json.Unmarshal(playerJSON, &PLAYERS)
