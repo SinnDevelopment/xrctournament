@@ -11,7 +11,7 @@ import (
 
 // wIndex is not for glass, home page handler.
 func wIndex(c *gin.Context) {
-	executeContent(c, "home")
+	executeContent(c, "index")
 }
 
 func wSchedule(c *gin.Context) {

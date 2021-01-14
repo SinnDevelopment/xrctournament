@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="RELEASE - Pro" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="xrctournament" />
-    <working_directory value="$PROJECT_DIR$/" />
-    <go_parameters value="-i -tags pro" />
+    <working_directory value="$PROJECT_DIR$/testdata" />
+    <go_parameters value="-tags pro" />
     <envs>
       <env name="GO111MODULE" value="off" />
     </envs>
