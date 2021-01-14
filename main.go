@@ -64,9 +64,14 @@ var (
 	PlayoffSchedule Schedule
 	// MasterSchedule is the currently active event schedule
 	MasterSchedule *Schedule
+
+	// Compile time variables.
+	Version    string
+	CommitHash string
 )
 
 func main() {
+	fmt.Println("Starting xRC Tournament v" + Version + "@" + CommitHash + " by Sinn Development - https://sinndevelopment.com")
 	_, err := os.Open("config.json")
 	if err != nil {
 		fmt.Println("Could not open config.json. Using default values.")
@@ -180,11 +185,13 @@ func main() {
 
 		setVersion()
 		go XRCDataHandler(Config.FileReadSpeed, quit)
+		fmt.Println("Successfully loaded webserver, view at http://" + Config.WebsiteURL + ":" + strconv.Itoa(Config.WebserverPort))
 		startWebserver(strconv.Itoa(Config.WebserverPort))
 
 	} else {
 		// If the webserver is not enabled, we must block the main thread from exiting with the datahandler.
 		setVersion()
+		fmt.Println("Successfully loaded file archiver.")
 		XRCDataHandler(Config.FileReadSpeed, quit)
 	}
 }

@@ -1,5 +1,7 @@
 #!/bin/bash
 version=$1
+releasebuild=1.0.0
+commithash=$(git log –pretty=format:’%h’ -n 1)
 extension=""
 if [ "$GOOS" == "windows" ]
 then
@@ -14,8 +16,8 @@ filename="xrctournament_$version$extension"
 if [ "$version" == "pro" ]
 then
     go test -v --tags pro
-    go build -v -tags pro -ldflags "-s -w" -o "$filename"
+    go build -v -tags pro -ldflags "-s -w -X main.Version=$releasebuild -X main.CommitHash=$commithash" -o "$filename"
 else
     go test -v --tags free
-    go build -v -tags free -ldflags "-s -w" -o "$filename"
+    go build -v -tags free -ldflags "-s -w -X main.Version=$releasebuild -X main.CommitHash=$commithash" -o "$filename"
 fi
