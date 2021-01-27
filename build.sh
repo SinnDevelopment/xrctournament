@@ -15,9 +15,15 @@ filename="xrctournament_$version$extension"
 
 if [ "$version" == "pro" ]
 then
-    go test -v --tags pro
+    if [ "$GOOS" == "linux" ]
+    then
+        go test -v --tags pro
+    fi
     go build -v -tags pro -ldflags "-s -w -X main.Version=$releasebuild -X main.CommitHash=$commithash" -o "$filename"
 else
-    go test -v --tags free
+    if [ "$GOOS" == "linux" ]
+    then
+        go test -v --tags free
+    fi
     go build -v -tags free -ldflags "-s -w -X main.Version=$releasebuild -X main.CommitHash=$commithash" -o "$filename"
 fi
